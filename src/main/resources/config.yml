@@ -4,7 +4,7 @@ blocks:
   # Block to decline trade
   decline: 'ink_sack:1'
   # Block to seperate inventories
-  seperator: 'barrier'
+  seperator: 'iron_fence'
 inventory:
   # Specifies the inventory-gui name while trading
   # Note: Use @p as a placeholder for the playername
