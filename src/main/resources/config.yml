@@ -8,7 +8,7 @@ blocks:
 inventory:
   # Specifies the inventory-gui name while trading
   # Note: Use @p as a placeholder for the playername
-  name: 'SimpleTrading ➨ @p'
+  name: 'SimpleTrading - @p'
 global:
   # The maximum distance where players are able to initiate a trade
   max-distance: 15
