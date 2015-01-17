@@ -58,7 +58,7 @@ public class CommandTrade implements CommandExecutor {
 		}
 		
 		if (args[0].equalsIgnoreCase("accept")) {
-			if (!player.hasPermission("trade.allowtrade")) {
+			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
 				player.sendMessage(ChatColor.RED + "You don't have permission!");
 				return true;
 			}
@@ -89,7 +89,7 @@ public class CommandTrade implements CommandExecutor {
 			trade.getInitiator().getPlayer().sendMessage(messageConfig.getMessage(Messages.DECLINE_REQUEST_MESSAGE, player.getName()));
 			player.sendMessage(messageConfig.getMessage(Messages.DECLINE_MESSAGE, trade.getInitiator().getName()));
 		} else if (args[0].equalsIgnoreCase("reload")) {
-			if (!player.hasPermission("trade.reload")) {
+			if (!player.hasPermission(Permissions.RELOAD.getPermission())) {
 				player.sendMessage(ChatColor.RED + "You don't have permission!");
 				return true;
 			}
@@ -97,7 +97,7 @@ public class CommandTrade implements CommandExecutor {
 			main.reload();
 			player.sendMessage(ChatColor.GRAY + "Plugin configurations reloaded!");
 		} else {
-			if (!player.hasPermission("trade.allowtrade")) {
+			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
 				player.sendMessage(ChatColor.RED + "You don't have permission!");
 				return true;
 			}

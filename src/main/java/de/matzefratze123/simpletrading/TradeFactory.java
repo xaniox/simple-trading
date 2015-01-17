@@ -217,7 +217,7 @@ public class TradeFactory implements Listener {
 			return;
 		}
 		
-		if (!player.hasPermission("trade.allowtrade")) {
+		if (!player.hasPermission(Permissions.TRADE.getPermission())) {
 			player.sendMessage(ChatColor.RED + "You don't have permission to trade!");
 			return;
 		}
