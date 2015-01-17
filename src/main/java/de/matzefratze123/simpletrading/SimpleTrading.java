@@ -65,7 +65,14 @@ public class SimpleTrading extends JavaPlugin {
 		config = new TradeConfiguration(getConfig());
 		messageConfig = new MessageConfiguration(YamlConfiguration.loadConfiguration(messageConfigFile));
 		
-		initVaultHook();
+		try {
+			initVaultHook();
+		} catch (EconomyException e) {
+			logger.warning(e.getMessage());
+			logger.warning("Plugin will now shutdown...");
+			getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
 		
 		factory = new TradeFactory(this, messageConfig, config, econ);
 		
@@ -95,23 +102,19 @@ public class SimpleTrading extends JavaPlugin {
 		}
 	}
 
-	public void initVaultHook() {
+	public void initVaultHook() throws EconomyException {
 		PluginManager pluginManager = getServer().getPluginManager();
 		if (!pluginManager.isPluginEnabled(VAULT_PLUGIN_NAME)) {
-			logger.warning("Unable to detect an enabled version enabled version of Vault "
+			throw new EconomyException("Unable to detect an enabled version enabled version of Vault "
 					     + "on your server. Please make sure you have installed the latest "
 						 + "version of Vault on your server.");
-			pluginManager.disablePlugin(this);
-			return;
 		}
 		
 		// Vault seems to exist so retrieve an provider instance of Economy.class
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
 		if (rsp == null) {
-			logger.warning("Unable to detect a Vault compatible economy plugin. Please install "
+			throw new EconomyException("Unable to detect a Vault compatible economy plugin. Please install "
 						 + "an economy plugin before using this plugin");
-			pluginManager.disablePlugin(this);
-			return;
 		}
 		
 		econ = rsp.getProvider();
@@ -139,6 +142,16 @@ public class SimpleTrading extends JavaPlugin {
 	
 	public MessageConfiguration getMessageConfiguration() {
 		return messageConfig;
+	}
+	
+	private static class EconomyException extends Exception {
+		
+		private static final long serialVersionUID = 4202877441468718150L;
+
+		public EconomyException(String message) {
+			super(message);
+		}
+		
 	}
 	
 }
