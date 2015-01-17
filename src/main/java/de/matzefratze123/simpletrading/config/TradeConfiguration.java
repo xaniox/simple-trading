@@ -46,7 +46,7 @@ public class TradeConfiguration {
 		seperatorBlockData = ItemStackData.fromConfigString(blockSection.getString("seperator", "barrier"), BLOCKDATA_SEPERATOR);
 		
 		ConfigurationSection inventorySection = config.getConfigurationSection("inventory");
-		inventoryName = inventorySection.getString("name", "SimpleTrading ➨ @");
+		inventoryName = inventorySection.getString("name", "SimpleTrading - @");
 		
 		ConfigurationSection globalSection = config.getConfigurationSection("global");
 		maximumTradeDistance = globalSection.getInt("max-distance", 15);
