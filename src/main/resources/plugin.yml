@@ -1,0 +1,8 @@
+name: Trade
+main: de.matzefratze123.trade.Main
+version: 1.0
+author: matzefratze123
+
+commands:
+  trade:
+    description: Trade With a Player

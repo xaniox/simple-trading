@@ -1,0 +1,44 @@
+# Message sent to player requesting the trade, @p is the placeholder for the player they are trading with
+trade-request: "&6You have requested a trade with @p"
+
+# Message sent to the person being requested to trade
+requested-message: "&6@p wants to trade with you.\nUse /trade accept or Shift+Right-Click them to accept!"
+
+# Message if your partner is already in a trade
+is-involved: "&6@p is already involved in another trade"
+
+# Message when the player has no pending trade requests
+not-involved: "&6You have no pending trade requests"
+
+# Message when the trade requests timed out
+request-timed-out: "&6Trade request timed out"
+
+# Message sent to the player who didn't close the trade window, @p is the trading partner
+cancel-message: "&6@p has cancelled the trade!"
+
+# Message to the player closing the trade window, @p is the other player
+decline-message: "&6You have cancelled the trade with @p"
+
+# Message to the initiator when the trade has been declined while requesting
+decline-request-message: "&6You're partner has declined your trade request."
+
+# Message when the trade partner logs out, @p is the other player
+left-message: "&4Your trade partner has left the game"
+
+# Message when your trade partner dies, use @p as a placeholder for their name
+death-message: "&4Your trade partner has died"
+
+# Message when your trade partner moves too far away, and the trade is cancelled, use @p as a placeholder for their name
+moved-away: "&4Your trade partner is now too far away!"
+
+# Message when your partner leaves the world, use @p as a placeholder for their name
+left-world: "&4Your partner left the world!"
+
+# Message when your partner accepts the trade, use @p as a placeholder for their name
+accepted: "&6@p has accepted your trade"
+
+# Message when your partner or you is in creative, use @p as a placeholder for their name
+creative: "&4@p cannot trade, you or your trade partner is in creative mode"
+
+# Message when the player confirms, use @p as a placeholder
+confirmed: "&6@p confirmed your trade"

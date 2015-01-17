@@ -1,0 +1,18 @@
+blocks:
+  # Block to accept trade
+  accept: 'ink_sack:10'
+  # Block to decline trade
+  decline: 'ink_sack:1'
+  # Block to seperate inventories
+  seperator: 'barrier'
+inventory:
+  # Specifies the inventory-gui name while trading
+  # Note: Use @p as a placeholder for the playername
+  name: 'Trade - @p'
+global:
+  # The maximum distance where players are able to initiate a trade
+  max-distance: 15
+  # Specifies wether trading in creative mode is enabled or not
+  creative-trading: true
+  # Specifies the timeout for trading requests in seconds
+  timeout: 60
