@@ -1,8 +1,8 @@
-name: Trade
-main: de.matzefratze123.trade.Main
-version: 1.0
-author: matzefratze123
+name: ${project.name}
+main: ${mainClass}
+version: ${project.version}
+author: ${project.author}
 
 commands:
   trade:
-    description: Trade With a Player
+    description: Basic trade command
