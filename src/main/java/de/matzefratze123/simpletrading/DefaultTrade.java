@@ -32,6 +32,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
@@ -319,10 +320,19 @@ public class DefaultTrade implements Trade {
 	public void onInventoryClick(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
 		SlotType type = event.getSlotType();
-		Inventory inventory = event.getClickedInventory();
 
 		if (type != SlotType.CONTAINER && type != SlotType.QUICKBAR) {
 			return;
+		}
+		
+		InventoryView view = event.getView();
+		Inventory inventory = null;
+		int rawSlot = event.getRawSlot();
+		
+		if (view.getTopInventory() != null && rawSlot < view.getTopInventory().getSize()) {
+			inventory = view.getTopInventory();
+		} else {
+			inventory = view.getBottomInventory();
 		}
 				
 		TradePlayer tradePlayer = initiator.getPlayer() == player ? initiator : partner;
