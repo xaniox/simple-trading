@@ -118,8 +118,17 @@ public class DefaultTrade implements Trade {
 	
 	@Override
 	public void accept() {
+		final int maxInvNameLength = 32;
 		String inventoryTitleInitiator = config.getInventoryName(partner.getName());
 		String inventoryTitlePartner = config.getInventoryName(initiator.getName());
+		
+		if (inventoryTitleInitiator.length() > maxInvNameLength) {
+			inventoryTitleInitiator = inventoryTitleInitiator.substring(0, maxInvNameLength);
+		}
+		
+		if (inventoryTitlePartner.length() > maxInvNameLength) {
+			inventoryTitlePartner = inventoryTitlePartner.substring(0, maxInvNameLength);
+		}
 		
 		Inventory initiatorInventory = Bukkit.createInventory(null, INVENTORY_SIZE, inventoryTitleInitiator);
 		Inventory partnerInventory = Bukkit.createInventory(null, INVENTORY_SIZE, inventoryTitlePartner);
