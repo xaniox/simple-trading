@@ -18,6 +18,7 @@
 package de.matzefratze123.simpletrading;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
@@ -29,6 +30,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.mcstats.Metrics;
 
 import de.matzefratze123.simpletrading.Trade.StopCause;
 import de.matzefratze123.simpletrading.config.MessageConfiguration;
@@ -69,6 +71,14 @@ public class SimpleTrading extends JavaPlugin {
 		
 		getCommand("trade").setExecutor(new CommandTrade(this));
 		movementTask = getServer().getScheduler().runTaskTimer(this, new MoveCheckerRunnable(factory, config), 20L, 30L);
+		
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException e) {
+			getLogger().warning("Could not start metrics service: " + e);
+		}
+		
 		getLogger().info("Plugin successfully enabled");
 	}
 	
