@@ -156,14 +156,21 @@ public class DefaultTrade implements Trade {
 			inv.setItem(seperatorIndex, seperator);
 		}
 		
-		ItemStack expInfoItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
-		ItemMeta expInfoMeta = expInfoItemStack.getItemMeta();
-		expInfoMeta.setDisplayName(ChatColor.DARK_GREEN + "Experience Trades");
-		List<String> expLore = Lists.newArrayList();
-		expLore.add(getOfferLoreString(getGenitive(initiator.getName()), "0"));
-		expLore.add(getOfferLoreString(getGenitive(partner.getName()), "0"));
-		expInfoMeta.setLore(expLore);
-		expInfoItemStack.setItemMeta(expInfoMeta);
+		
+		ItemStack expInfoItemStack;
+		
+		if (config.usesXpTrading()) {
+			expInfoItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+			ItemMeta expInfoMeta = expInfoItemStack.getItemMeta();
+			expInfoMeta.setDisplayName(ChatColor.DARK_GREEN + "Experience Trades");
+			List<String> expLore = Lists.newArrayList();
+			expLore.add(getOfferLoreString(getGenitive(initiator.getName()), "0"));
+			expLore.add(getOfferLoreString(getGenitive(partner.getName()), "0"));
+			expInfoMeta.setLore(expLore);
+			expInfoItemStack.setItemMeta(expInfoMeta);
+		} else {
+			expInfoItemStack = seperator;
+		}
 		
 		ItemStack acceptItemStack = config.getAcceptBlockData().newItemStack(1);
 		ItemMeta acceptMeta = acceptItemStack.getItemMeta();
@@ -664,8 +671,10 @@ public class DefaultTrade implements Trade {
 		initiator.getInventory().setItem(CONFIRMATION_INFO_INDEX, statusStack);
 		partner.getInventory().setItem(CONFIRMATION_INFO_INDEX, statusStack);
 		
-		initiator.getInventory().setItem(EXP_INFO_INDEX, expInfo);
-		partner.getInventory().setItem(EXP_INFO_INDEX, expInfo);
+		if (config.usesXpTrading()) {
+			initiator.getInventory().setItem(EXP_INFO_INDEX, expInfo);
+			partner.getInventory().setItem(EXP_INFO_INDEX, expInfo);
+		}
 		
 		initiator.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
 		partner.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
