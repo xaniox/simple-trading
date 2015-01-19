@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.matzefratze123</groupId>
   <artifactId>simpletrading</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
   <name>SimpleTrading</name>
   <inceptionYear>2015</inceptionYear>
   <description>Allow your players to safely trade with each other</description>
