@@ -212,14 +212,20 @@ public class DefaultTrade implements Trade {
 		meta500.setLore(addMoneyLore);
 		add500ItemStack.setItemMeta(meta500);
 		
-		ItemStack addExpLevelItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
-		ItemMeta addExpLevelMeta = addExpLevelItemStack.getItemMeta();
-		addExpLevelMeta.setDisplayName(ChatColor.WHITE + "Add/Remove one exp level");
-		List<String> addExpLevelLore = Lists.newArrayList();
-		addExpLevelLore.add(ChatColor.GRAY + "Left-Click to add a level");
-		addExpLevelLore.add(ChatColor.GRAY + "Right-Click to remove a level");
-		addExpLevelMeta.setLore(addExpLevelLore);
-		addExpLevelItemStack.setItemMeta(addExpLevelMeta);
+		ItemStack addExpLevelItemStack;
+		
+		if (config.usesXpTrading()) {
+			addExpLevelItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+			ItemMeta addExpLevelMeta = addExpLevelItemStack.getItemMeta();
+			addExpLevelMeta.setDisplayName(ChatColor.WHITE + "Add/Remove one exp level");
+			List<String> addExpLevelLore = Lists.newArrayList();
+			addExpLevelLore.add(ChatColor.GRAY + "Left-Click to add a level");
+			addExpLevelLore.add(ChatColor.GRAY + "Right-Click to remove a level");
+			addExpLevelMeta.setLore(addExpLevelLore);
+			addExpLevelItemStack.setItemMeta(addExpLevelMeta);
+		} else {
+			addExpLevelItemStack = seperator;
+		}
 		
 		inv.setItem(EXP_INFO_INDEX, expInfoItemStack);
 		inv.setItem(ACCEPT_TRADE_INDEX, acceptItemStack);
@@ -358,7 +364,7 @@ public class DefaultTrade implements Trade {
 			} else if (slot == ADD_500_INDEX) {
 				moneyAdding = 500;
 				action = TradeAction.ADD_MONEY;
-			} else if (slot == ADD_EXP_LEVEL_INDEX) {
+			} else if (slot == ADD_EXP_LEVEL_INDEX && config.usesXpTrading()) {
 				action = TradeAction.ADD_EXP;
 			} else if (slot == ACCEPT_TRADE_INDEX) {
 				action = TradeAction.ACCEPT;

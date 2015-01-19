@@ -16,3 +16,5 @@ global:
   creative-trading: true
   # Specifies the timeout for trading requests in seconds
   timeout: 60
+  # Specifies wether to use xp trading or not
+  use-xp-trading: true

@@ -34,6 +34,7 @@ public class TradeConfiguration {
 	private int maximumTradeDistance;
 	private boolean allowCreativeTrading;
 	private int timeout;
+	private boolean useXpTrading;
 	
 	public TradeConfiguration(Configuration config) {
 		loadByConfiguration(config);
@@ -52,6 +53,7 @@ public class TradeConfiguration {
 		maximumTradeDistance = globalSection.getInt("max-distance", 15);
 		allowCreativeTrading = globalSection.getBoolean("creative-trading", true);
 		timeout = globalSection.getInt("timeout", 60);
+		useXpTrading = globalSection.getBoolean("use-xp-trading", true);
 	}
 	
 	public ItemStackData getAcceptBlockData() {
@@ -80,6 +82,10 @@ public class TradeConfiguration {
 	
 	public int getTimeout() {
 		return timeout;
+	}
+	
+	public boolean usesXpTrading() {
+		return useXpTrading;
 	}
 	
 	public static class ItemStackData {
