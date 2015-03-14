@@ -20,7 +20,8 @@ package de.matzefratze123.simpletrading;
 public enum Permissions {
 		
 	TRADE("trade"),
-	RELOAD("reload");
+	RELOAD("reload"), 
+	SIGN("sign");
 	
 	private static final String PREFIX = "simpletrading.";
 	private String subPermission;

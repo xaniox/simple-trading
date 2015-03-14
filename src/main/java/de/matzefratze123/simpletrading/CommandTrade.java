@@ -17,6 +17,8 @@
  */
 package de.matzefratze123.simpletrading;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -24,6 +26,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import com.google.common.collect.Lists;
 
 import de.matzefratze123.simpletrading.config.MessageConfiguration;
 import de.matzefratze123.simpletrading.config.Messages;
@@ -96,6 +102,49 @@ public class CommandTrade implements CommandExecutor {
 			
 			main.reload();
 			player.sendMessage(ChatColor.GRAY + "Plugin configurations reloaded!");
+		} else if (args[0].equalsIgnoreCase("sign")) {
+			if (!player.hasPermission(Permissions.SIGN.getPermission())) {
+				player.sendMessage(ChatColor.RED + "You don't have permission!");
+				return true;
+			}
+			
+			int loreIndex = 0;
+			
+			if (args.length > 1) {
+				try {
+					loreIndex = Integer.parseInt(args[1]) - 1;
+				} catch (NumberFormatException nfe) {
+					player.sendMessage(ChatColor.RED + args[1] + " is not a number!");
+					return true;
+				}
+			}
+			
+			List<String> lores = main.getConfiguration().getItemControlLoreList();
+			if (loreIndex >= lores.size()) {
+				player.sendMessage(ChatColor.RED + "There is no lore with number " + (loreIndex + 1) + "!");
+				return true;
+			}
+			
+			String lore = lores.get(loreIndex);
+			ItemStack stack = player.getItemInHand();
+			
+			if (stack == null) {
+				player.sendMessage(ChatColor.RED + "There is no item in your hand!");
+				return true;
+			}
+			
+			ItemMeta meta = stack.getItemMeta();
+			List<String> itemLore = meta.getLore();
+			if (itemLore == null) {
+				itemLore = Lists.newArrayList();
+			}
+			
+			itemLore.add(lore);
+			meta.setLore(itemLore);
+			
+			stack.setItemMeta(meta);
+			player.setItemInHand(stack);
+			player.sendMessage(ChatColor.GRAY + "Lore has been applied to the item in your hand.");
 		} else {
 			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
 				player.sendMessage(ChatColor.RED + "You don't have permission!");

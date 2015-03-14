@@ -57,13 +57,15 @@ public class TradeFactory implements Listener {
 	private final Set<Trade> trades;
 	private final MessageConfiguration messageConfig;
 	private final Economy econ;
+	private final ItemControlManager controlManager;
 	
-	public TradeFactory(JavaPlugin plugin, MessageConfiguration messageConfig, TradeConfiguration config, Economy econ) {
+	public TradeFactory(JavaPlugin plugin, MessageConfiguration messageConfig, TradeConfiguration config, Economy econ, ItemControlManager controlManager) {
 		this.plugin = plugin;
 		this.config = config;
 		this.trades = Sets.newLinkedHashSet();
 		this.messageConfig = messageConfig;
 		this.econ = econ;
+		this.controlManager = controlManager;
 		
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
@@ -77,7 +79,7 @@ public class TradeFactory implements Listener {
 			initiator.sendMessage(messageConfig.getMessage(Messages.IS_INVOLVED, partner.getName()));
 			trade = null;
 		} else {
-			DefaultTrade simpleTrade = new DefaultTrade(initiator, partner, config, messageConfig, econ, plugin);
+			DefaultTrade simpleTrade = new DefaultTrade(initiator, partner, config, messageConfig, econ, controlManager, plugin);
 			
 			int timeout = config.getTimeout();
 			final BukkitTask timeoutTask = Bukkit.getScheduler().runTaskLater(plugin, new TimeoutRunnable(simpleTrade), timeout * 20L);

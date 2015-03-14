@@ -17,10 +17,16 @@
  */
 package de.matzefratze123.simpletrading.config;
 
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+
+import com.google.common.collect.Lists;
+
+import de.matzefratze123.simpletrading.ItemControlManager.ItemControlMode;
 
 public class TradeConfiguration { 
 	
@@ -35,6 +41,9 @@ public class TradeConfiguration {
 	private boolean allowCreativeTrading;
 	private int timeout;
 	private boolean useXpTrading;
+	private ItemControlMode controlMode;
+	private List<ItemStackData> controlItems;
+	private List<String> controlLores;
 	
 	public TradeConfiguration(Configuration config) {
 		loadByConfiguration(config);
@@ -54,6 +63,17 @@ public class TradeConfiguration {
 		allowCreativeTrading = globalSection.getBoolean("creative-trading", true);
 		timeout = globalSection.getInt("timeout", 60);
 		useXpTrading = globalSection.getBoolean("use-xp-trading", true);
+		
+		ConfigurationSection itemControlSection = config.getConfigurationSection("item-control");
+		controlMode = ItemControlMode.getMode(itemControlSection.getString("control-mode"), ItemControlMode.BLACKLIST);
+		List<String> controlItemStringList = itemControlSection.getStringList("item-list");
+		controlItems = Lists.newArrayList();
+		
+		for (String controlItemString : controlItemStringList) {
+			controlItems.add(ItemStackData.fromConfigString(controlItemString, BLOCKDATA_SEPERATOR));
+		}
+		
+		controlLores = itemControlSection.getStringList("item-lore");
 	}
 	
 	public ItemStackData getAcceptBlockData() {
@@ -86,6 +106,18 @@ public class TradeConfiguration {
 	
 	public boolean usesXpTrading() {
 		return useXpTrading;
+	}
+	
+	public ItemControlMode getItemControlMode() {
+		return controlMode;
+	}
+	
+	public List<ItemStackData> getItemControlList() {
+		return controlItems;
+	}
+	
+	public List<String> getItemControlLoreList() {
+		return controlLores;
 	}
 	
 	public static class ItemStackData {

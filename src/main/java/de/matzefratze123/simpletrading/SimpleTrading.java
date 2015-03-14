@@ -47,6 +47,7 @@ public class SimpleTrading extends JavaPlugin {
 	private MessageConfiguration messageConfig;
 	private TradeFactory factory;
 	private BukkitTask movementTask;
+	private ItemControlManager controlManager;
 
 	public void onEnable() {
 		logger = getLogger();
@@ -74,7 +75,9 @@ public class SimpleTrading extends JavaPlugin {
 			return;
 		}
 		
-		factory = new TradeFactory(this, messageConfig, config, econ);
+		controlManager = new ItemControlManager(config);
+		
+		factory = new TradeFactory(this, messageConfig, config, econ, controlManager);
 		
 		getCommand("trade").setExecutor(new CommandTrade(this));
 		movementTask = getServer().getScheduler().runTaskTimer(this, new MoveCheckerRunnable(factory, config), 20L, 30L);
@@ -126,6 +129,8 @@ public class SimpleTrading extends JavaPlugin {
 		
 		Configuration messageConfiguration = YamlConfiguration.loadConfiguration(messageConfigFile);
 		messageConfig.loadByConfiguration(messageConfiguration);
+		
+		controlManager.updateValues(config);
 	}
 	
 	public Economy getEconomy() {

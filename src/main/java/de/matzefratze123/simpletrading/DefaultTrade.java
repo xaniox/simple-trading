@@ -75,17 +75,20 @@ public class DefaultTrade implements Trade {
 	private final TradeConfiguration config;
 	private final MessageConfiguration messageConfig;
 	private final Economy econ;
+	private final ItemControlManager controlManager;
 	
 	private StateChangedListener listener;
 	private TradeState state;
 	
-	public DefaultTrade(Player initiator, Player partner, TradeConfiguration config, MessageConfiguration messageConfig, Economy econ, JavaPlugin plugin) {
+	public DefaultTrade(Player initiator, Player partner, TradeConfiguration config, MessageConfiguration messageConfig, Economy econ,
+			ItemControlManager controlManager, JavaPlugin plugin) {
 		this.plugin = plugin;
 		this.initiator = new TradePlayer(initiator);
 		this.partner = new TradePlayer(partner);
 		this.config = config;
 		this.messageConfig = messageConfig;
 		this.econ = econ;
+		this.controlManager = controlManager;
 		this.state = TradeState.REQUESTED;
 	}
 	
@@ -454,15 +457,22 @@ public class DefaultTrade implements Trade {
 		
 		if (action == TradeAction.MOVE_ITEM_TO_PLAYER_INVENTORY || action == TradeAction.MOVE_ITEM_TO_TRADE_INVENTORY) {
 			ItemStack stack = event.getCurrentItem();
-			ItemStack otherStack = stack.clone();
+			
+			if (!controlManager.isTradeable(stack)) {
+				// This item is not tradeable
+				player.sendMessage(ChatColor.RED + "You cannot trade this item!");
+				return;
+			}
+			
+			ItemStack stackClone = stack.clone();
 			
 			int newStackAmount;
 			
 			if (clickType == ClickType.LEFT) {
-				otherStack.setAmount(stack.getAmount());
+				stackClone.setAmount(stack.getAmount());
 				newStackAmount = 0;
 			} else if (clickType == ClickType.RIGHT) {
-				otherStack.setAmount(1);
+				stackClone.setAmount(1);
 				
 				if (stack.getAmount() == 1) {
 					newStackAmount = 0;
@@ -474,7 +484,7 @@ public class DefaultTrade implements Trade {
 			}
 			
 			if (action == TradeAction.MOVE_ITEM_TO_TRADE_INVENTORY) {
-				int untransferred = addToTradeInventory(tradePlayer, otherStack);
+				int untransferred = addToTradeInventory(tradePlayer, stackClone);
 				if (untransferred != 0) {
 					stack.setAmount(newStackAmount + untransferred);
 				} else {
@@ -482,7 +492,7 @@ public class DefaultTrade implements Trade {
 				}
 			} else {
 				Inventory inv = player.getInventory();
-				Map<Integer, ItemStack> untransferred = inv.addItem(otherStack);
+				Map<Integer, ItemStack> untransferred = inv.addItem(stackClone);
 				if (!untransferred.isEmpty()) {
 					stack.setAmount(newStackAmount + untransferred.get(0).getAmount());
 				} else {
