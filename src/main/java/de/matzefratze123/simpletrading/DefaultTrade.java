@@ -36,7 +36,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import com.google.common.collect.Lists;
 
@@ -71,7 +70,7 @@ public class DefaultTrade implements Trade {
 	private final TradePlayer initiator;
 	private final TradePlayer partner;
 	
-	private final JavaPlugin plugin;
+	private final SimpleTrading plugin;
 	private final TradeConfiguration config;
 	private final MessageConfiguration messageConfig;
 	private final Economy econ;
@@ -81,7 +80,7 @@ public class DefaultTrade implements Trade {
 	private TradeState state;
 	
 	public DefaultTrade(Player initiator, Player partner, TradeConfiguration config, MessageConfiguration messageConfig, Economy econ,
-			ItemControlManager controlManager, JavaPlugin plugin) {
+			ItemControlManager controlManager, SimpleTrading plugin) {
 		this.plugin = plugin;
 		this.initiator = new TradePlayer(initiator);
 		this.partner = new TradePlayer(partner);
@@ -158,7 +157,6 @@ public class DefaultTrade implements Trade {
 		for (int seperatorIndex : SEPERATOR_INDEXES) {
 			inv.setItem(seperatorIndex, seperator);
 		}
-		
 		
 		ItemStack expInfoItemStack;
 		
@@ -237,14 +235,15 @@ public class DefaultTrade implements Trade {
 			addExpLevelItemStack = seperator;
 		}
 		
+		boolean usesVault = plugin.usesVault();
 		inv.setItem(EXP_INFO_INDEX, expInfoItemStack);
 		inv.setItem(ACCEPT_TRADE_INDEX, acceptItemStack);
 		inv.setItem(CONFIRMATION_INFO_INDEX, unconfirmedStatusItemStack);
 		inv.setItem(DECLINE_TRADE_INDEX, declineItemStack);
 		inv.setItem(MONEY_INFO_INDEX, moneyInfoItemStack);
-		inv.setItem(ADD_50_INDEX, add50ItemStack);
-		inv.setItem(ADD_100_INDEX, add100ItemStack);
-		inv.setItem(ADD_500_INDEX, add500ItemStack);
+		inv.setItem(ADD_50_INDEX, usesVault ? add50ItemStack : seperator);
+		inv.setItem(ADD_100_INDEX, usesVault ? add100ItemStack : seperator);
+		inv.setItem(ADD_500_INDEX, usesVault ? add500ItemStack : seperator);
 		inv.setItem(ADD_EXP_LEVEL_INDEX, addExpLevelItemStack);
 	}
 	

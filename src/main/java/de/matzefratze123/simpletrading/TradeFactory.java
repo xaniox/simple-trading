@@ -38,7 +38,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -52,14 +51,14 @@ import de.matzefratze123.simpletrading.config.TradeConfiguration;
 
 public class TradeFactory implements Listener {
 	
-	private final JavaPlugin plugin;
+	private final SimpleTrading plugin;
 	private final TradeConfiguration config;
 	private final Set<Trade> trades;
 	private final MessageConfiguration messageConfig;
 	private final Economy econ;
 	private final ItemControlManager controlManager;
 	
-	public TradeFactory(JavaPlugin plugin, MessageConfiguration messageConfig, TradeConfiguration config, Economy econ, ItemControlManager controlManager) {
+	public TradeFactory(SimpleTrading plugin, MessageConfiguration messageConfig, TradeConfiguration config, Economy econ, ItemControlManager controlManager) {
 		this.plugin = plugin;
 		this.config = config;
 		this.trades = Sets.newLinkedHashSet();

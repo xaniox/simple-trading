@@ -19,7 +19,6 @@ package de.matzefratze123.simpletrading;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -41,17 +40,16 @@ public class SimpleTrading extends JavaPlugin {
 	private static final String VAULT_PLUGIN_NAME = "Vault";
 	
 	private File messageConfigFile;
-	private Logger logger;
-	private Economy econ;
 	private TradeConfiguration config;
 	private MessageConfiguration messageConfig;
 	private TradeFactory factory;
 	private BukkitTask movementTask;
 	private ItemControlManager controlManager;
+	
+	private boolean usingVault;
+	private Economy econ;
 
 	public void onEnable() {
-		logger = getLogger();
-		
 		File configFile = new File(this.getDataFolder(), "config.yml");
 		messageConfigFile = new File(this.getDataFolder(), "messages.yml");
 		
@@ -66,14 +64,7 @@ public class SimpleTrading extends JavaPlugin {
 		config = new TradeConfiguration(getConfig());
 		messageConfig = new MessageConfiguration(YamlConfiguration.loadConfiguration(messageConfigFile));
 		
-		try {
-			initVaultHook();
-		} catch (EconomyException e) {
-			logger.warning(e.getMessage());
-			logger.warning("Plugin will now shutdown...");
-			getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
+		initVaultHook();
 		
 		controlManager = new ItemControlManager(config);
 		
@@ -105,21 +96,19 @@ public class SimpleTrading extends JavaPlugin {
 		}
 	}
 
-	public void initVaultHook() throws EconomyException {
+	public void initVaultHook() {
 		PluginManager pluginManager = getServer().getPluginManager();
 		if (!pluginManager.isPluginEnabled(VAULT_PLUGIN_NAME)) {
-			throw new EconomyException("Unable to detect an enabled version enabled version of Vault "
-					     + "on your server. Please make sure you have installed the latest "
-						 + "version of Vault on your server.");
+			return;
 		}
 		
 		// Vault seems to exist so retrieve an provider instance of Economy.class
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
 		if (rsp == null) {
-			throw new EconomyException("Unable to detect a Vault compatible economy plugin. Please install "
-						 + "an economy plugin before using this plugin");
+			return;
 		}
 		
+		usingVault = true;
 		econ = rsp.getProvider();
 	}
 	
@@ -131,6 +120,10 @@ public class SimpleTrading extends JavaPlugin {
 		messageConfig.loadByConfiguration(messageConfiguration);
 		
 		controlManager.updateValues(config);
+	}
+	
+	public boolean usesVault() {
+		return usingVault;
 	}
 	
 	public Economy getEconomy() {
@@ -147,16 +140,6 @@ public class SimpleTrading extends JavaPlugin {
 	
 	public MessageConfiguration getMessageConfiguration() {
 		return messageConfig;
-	}
-	
-	private static class EconomyException extends Exception {
-		
-		private static final long serialVersionUID = 4202877441468718150L;
-
-		public EconomyException(String message) {
-			super(message);
-		}
-		
 	}
 	
 }
