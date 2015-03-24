@@ -189,36 +189,44 @@ public class DefaultTrade implements Trade {
 		declineMeta.setDisplayName(ChatColor.RED + "Decline Trade");
 		declineItemStack.setItemMeta(declineMeta);
 		
-		ItemStack moneyInfoItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
-		ItemMeta moneyMeta = moneyInfoItemStack.getItemMeta();
-		moneyMeta.setDisplayName(ChatColor.GOLD + "Money Trades");
-		List<String> moneyLore = Lists.newArrayList();
-		moneyLore.add(getOfferLoreString(getGenitive(initiator.getName()), econ.format(0)));
-		moneyLore.add(getOfferLoreString(getGenitive(partner.getName()), econ.format(0)));
-		moneyMeta.setLore(moneyLore);
-		moneyInfoItemStack.setItemMeta(moneyMeta);
+		ItemStack moneyInfoItemStack = null;
+		ItemStack add50ItemStack = null;
+		ItemStack add100ItemStack = null;
+		ItemStack add500ItemStack = null;
 		
-		List<String> addMoneyLore = Lists.newArrayList();
-		addMoneyLore.add(ChatColor.GRAY + "Left-Click to add money");
-		addMoneyLore.add(ChatColor.GRAY + "Right-Click to remove money");
-		
-		ItemStack add50ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
-		ItemMeta meta50 = add50ItemStack.getItemMeta();
-		meta50.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(50));
-		meta50.setLore(addMoneyLore);
-		add50ItemStack.setItemMeta(meta50);
-		
-		ItemStack add100ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
-		ItemMeta meta100 = add100ItemStack.getItemMeta();
-		meta100.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(100));
-		meta100.setLore(addMoneyLore);
-		add100ItemStack.setItemMeta(meta100);
-		
-		ItemStack add500ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
-		ItemMeta meta500 = add500ItemStack.getItemMeta();
-		meta500.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(500));
-		meta500.setLore(addMoneyLore);
-		add500ItemStack.setItemMeta(meta500);
+		boolean usesVault = plugin.usesVault();
+		if (usesVault) {
+			moneyInfoItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta moneyMeta = moneyInfoItemStack.getItemMeta();
+			moneyMeta.setDisplayName(ChatColor.GOLD + "Money Trades");
+			List<String> moneyLore = Lists.newArrayList();
+			moneyLore.add(getOfferLoreString(getGenitive(initiator.getName()), econ.format(0)));
+			moneyLore.add(getOfferLoreString(getGenitive(partner.getName()), econ.format(0)));
+			moneyMeta.setLore(moneyLore);
+			moneyInfoItemStack.setItemMeta(moneyMeta);
+			
+			List<String> addMoneyLore = Lists.newArrayList();
+			addMoneyLore.add(ChatColor.GRAY + "Left-Click to add money");
+			addMoneyLore.add(ChatColor.GRAY + "Right-Click to remove money");
+			
+			add50ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta meta50 = add50ItemStack.getItemMeta();
+			meta50.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(50));
+			meta50.setLore(addMoneyLore);
+			add50ItemStack.setItemMeta(meta50);
+			
+			add100ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta meta100 = add100ItemStack.getItemMeta();
+			meta100.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(100));
+			meta100.setLore(addMoneyLore);
+			add100ItemStack.setItemMeta(meta100);
+			
+			add500ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta meta500 = add500ItemStack.getItemMeta();
+			meta500.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(500));
+			meta500.setLore(addMoneyLore);
+			add500ItemStack.setItemMeta(meta500);
+		}
 		
 		ItemStack addExpLevelItemStack;
 		
@@ -235,12 +243,11 @@ public class DefaultTrade implements Trade {
 			addExpLevelItemStack = seperator;
 		}
 		
-		boolean usesVault = plugin.usesVault();
 		inv.setItem(EXP_INFO_INDEX, expInfoItemStack);
 		inv.setItem(ACCEPT_TRADE_INDEX, acceptItemStack);
 		inv.setItem(CONFIRMATION_INFO_INDEX, unconfirmedStatusItemStack);
 		inv.setItem(DECLINE_TRADE_INDEX, declineItemStack);
-		inv.setItem(MONEY_INFO_INDEX, moneyInfoItemStack);
+		inv.setItem(MONEY_INFO_INDEX, usesVault ? moneyInfoItemStack : seperator);
 		inv.setItem(ADD_50_INDEX, usesVault ? add50ItemStack : seperator);
 		inv.setItem(ADD_100_INDEX, usesVault ? add100ItemStack : seperator);
 		inv.setItem(ADD_500_INDEX, usesVault ? add500ItemStack : seperator);
@@ -352,6 +359,7 @@ public class DefaultTrade implements Trade {
 				
 		TradePlayer tradePlayer = initiator.getPlayer() == player ? initiator : partner;
 		boolean isPlayerInventory = inventory.getType() == InventoryType.PLAYER;
+		boolean usesVault = plugin.usesVault();
 		
 		event.setCancelled(true);
 		
@@ -425,6 +433,10 @@ public class DefaultTrade implements Trade {
 			declineAll();
 			break;
 		case ADD_MONEY:
+			if (!usesVault) {
+				return;
+			}
+			
 			int newMoneyOffer = tradePlayer.getMoneyOffer();
 			if (clickType == ClickType.LEFT) {
 				newMoneyOffer += moneyAdding;
@@ -643,6 +655,7 @@ public class DefaultTrade implements Trade {
 		ItemStack statusStack = null;
 		String loreLine;
 		boolean isConfirmed;
+		boolean usesVault = plugin.usesVault();
 		
 		if (initiator.hasAccepted() || partner.hasAccepted()) {
 			statusStack = CONFIRMED_STATUS_MATERIAL_DATA.toItemStack(1);
@@ -668,14 +681,19 @@ public class DefaultTrade implements Trade {
 		expInfoMeta.setLore(expInfoLore);
 		expInfo.setItemMeta(expInfoMeta);
 		
-		ItemStack moneyInfo = MONEY_MATERIAL_DATA.toItemStack(1);
-		ItemMeta moneyInfoMeta = moneyInfo.getItemMeta();
-		moneyInfoMeta.setDisplayName(ChatColor.GOLD + "Money Trades");
-		List<String> moneyInfoLore = Lists.newArrayList();
-		moneyInfoLore.add(getOfferLoreString(getGenitive(initiator.getName()), econ.format(initiator.getMoneyOffer())));
-		moneyInfoLore.add(getOfferLoreString(getGenitive(partner.getName()), econ.format(partner.getMoneyOffer())));
-		moneyInfoMeta.setLore(moneyInfoLore);
-		moneyInfo.setItemMeta(moneyInfoMeta);
+		if (usesVault) {
+			ItemStack moneyInfo = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta moneyInfoMeta = moneyInfo.getItemMeta();
+			moneyInfoMeta.setDisplayName(ChatColor.GOLD + "Money Trades");
+			List<String> moneyInfoLore = Lists.newArrayList();
+			moneyInfoLore.add(getOfferLoreString(getGenitive(initiator.getName()), econ.format(initiator.getMoneyOffer())));
+			moneyInfoLore.add(getOfferLoreString(getGenitive(partner.getName()), econ.format(partner.getMoneyOffer())));
+			moneyInfoMeta.setLore(moneyInfoLore);
+			moneyInfo.setItemMeta(moneyInfoMeta);
+			
+			initiator.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
+			partner.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
+		}
 		
 		initiator.getInventory().setItem(CONFIRMATION_INFO_INDEX, statusStack);
 		partner.getInventory().setItem(CONFIRMATION_INFO_INDEX, statusStack);
@@ -684,9 +702,6 @@ public class DefaultTrade implements Trade {
 			initiator.getInventory().setItem(EXP_INFO_INDEX, expInfo);
 			partner.getInventory().setItem(EXP_INFO_INDEX, expInfo);
 		}
-		
-		initiator.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
-		partner.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
 	}
 
 	private enum TradeAction {
