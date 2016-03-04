@@ -27,9 +27,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -48,6 +47,8 @@ public class DefaultTrade implements Trade {
 
 	private static final int INVENTORY_SIZE = 6 * 9;
 	private static final int[] SEPERATOR_INDEXES = { 0, 1, 7, 8, 9, 10, 11, 15, 16, 17, 31, 40, 49 };
+    private static final String[] LEVEL_UP_SEARCH = {"LEVEL_UP", "PLAYER_LEVELUP"};
+    private static final String[] CLICK_SEARCH = {"UI_BUTTON_CLICK", "CLICK"};
 	
 	private static final MaterialData EXPERIENCE_MATERIAL_DATA = new MaterialData(Material.EXP_BOTTLE);
 	private static final MaterialData MONEY_MATERIAL_DATA = new MaterialData(Material.GOLD_NUGGET);
@@ -393,7 +394,9 @@ public class DefaultTrade implements Trade {
 				}
 			}
 		}
-				
+
+        Sound clickSound = getSoundEnumType(CLICK_SEARCH);
+
 		//Process the calculated data
 		switch (action) {
 		case ACCEPT:
@@ -408,6 +411,7 @@ public class DefaultTrade implements Trade {
 			break;
 		case ADD_EXP:
 			int newExpOffer = tradePlayer.getExpOffer();
+
 			if (clickType == ClickType.LEFT) {
 				newExpOffer++;
 				
@@ -416,8 +420,10 @@ public class DefaultTrade implements Trade {
 					player.sendMessage(ChatColor.RED + "You do not have enough xp to do this!");
 					return;
 				}
-				
-				player.playSound(player.getLocation(), Sound.CLICK, 1.0F, ADD_PITCH);
+
+                if (clickSound != null) {
+                    player.playSound(player.getLocation(), clickSound, 1.0F, ADD_PITCH);
+                }
 			} else if (clickType == ClickType.RIGHT) {
 				newExpOffer--;
 				
@@ -425,8 +431,10 @@ public class DefaultTrade implements Trade {
 					player.sendMessage(ChatColor.RED + "You do not provide an exp offer!");
 					return;
 				}
-				
-				player.playSound(player.getLocation(), Sound.CLICK, 1.0F, REMOVE_PITCH);
+
+                if (clickSound != null) {
+                    player.playSound(player.getLocation(), clickSound, 1.0F, REMOVE_PITCH);
+                }
 			}
 			
 			tradePlayer.setExpOffer(newExpOffer);
@@ -436,7 +444,7 @@ public class DefaultTrade implements Trade {
 			if (!usesVault) {
 				return;
 			}
-			
+
 			int newMoneyOffer = tradePlayer.getMoneyOffer();
 			if (clickType == ClickType.LEFT) {
 				newMoneyOffer += moneyAdding;
@@ -446,8 +454,10 @@ public class DefaultTrade implements Trade {
 					player.sendMessage(ChatColor.RED + "You do not have sufficient funds to do this!");
 					return;
 				}
-				
-				player.playSound(player.getLocation(), Sound.CLICK, 1.0F, ADD_PITCH);
+
+                if (clickSound != null) {
+                    player.playSound(player.getLocation(), clickSound, 1.0F, ADD_PITCH);
+                }
 			} else if (clickType == ClickType.RIGHT) {
 				newMoneyOffer -= moneyAdding;
 				
@@ -455,8 +465,10 @@ public class DefaultTrade implements Trade {
 					player.sendMessage(ChatColor.RED + "Your money offer cannot be negative!");
 					return;
 				}
-				
-				player.playSound(player.getLocation(), Sound.CLICK, 1.0F, REMOVE_PITCH);
+
+                if (clickSound != null) {
+                    player.playSound(player.getLocation(), clickSound, 1.0F, REMOVE_PITCH);
+                }
 			}
 			
 			tradePlayer.setMoneyOffer(newMoneyOffer);
@@ -523,6 +535,15 @@ public class DefaultTrade implements Trade {
 		
 		updateInventoryStatus();
 	}
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        System.out.println("InventoryDragEvent triggered!");
+        System.out.println(event.getInventorySlots());
+        System.out.println(event.getNewItems());
+        System.out.println(event.getCursor());
+        System.out.println(event.getType().name());
+    }
 	
 	private void declineAll() {
 		initiator.setAccepted(false);
@@ -563,9 +584,12 @@ public class DefaultTrade implements Trade {
 		
 		initiatorPlayer.updateInventory();
 		partnerPlayer.updateInventory();
-		
-		initiatorPlayer.playSound(initiatorPlayer.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
-		partnerPlayer.playSound(partnerPlayer.getLocation(), Sound.LEVEL_UP, 1.0F, 1.0F);
+
+        Sound levelUpSound = getSoundEnumType(LEVEL_UP_SEARCH);
+        if (levelUpSound != null) {
+            initiatorPlayer.playSound(initiatorPlayer.getLocation(), levelUpSound, 1.0F, 1.0F);
+            partnerPlayer.playSound(partnerPlayer.getLocation(), levelUpSound, 1.0F, 1.0F);
+        }
 		
 		initiatorPlayer.sendMessage(messageConfig.getMessage(Messages.CONFIRMED, partner.getName()));
 		partnerPlayer.sendMessage(messageConfig.getMessage(Messages.CONFIRMED, initiator.getName()));
@@ -703,6 +727,19 @@ public class DefaultTrade implements Trade {
 			partner.getInventory().setItem(EXP_INFO_INDEX, expInfo);
 		}
 	}
+
+    public static Sound getSoundEnumType(String... searchStrings) {
+        Sound[] sounds = Sound.values();
+        for (Sound sound : sounds) {
+            for (String search : searchStrings) {
+                if (sound.name().toUpperCase().contains(search)) {
+                    return sound;
+                }
+            }
+        }
+
+        return null;
+    }
 
 	private enum TradeAction {
 		

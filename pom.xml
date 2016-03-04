@@ -137,7 +137,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.8-R0.1-SNAPSHOT</version>
+      <version>1.9-R0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
@@ -147,7 +147,7 @@
     <dependency>
       <groupId>org.mcstats.bukkit</groupId>
       <artifactId>metrics</artifactId>
-      <version>R7</version>
+      <version>R8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>org.bukkit</groupId>
