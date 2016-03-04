@@ -51,7 +51,7 @@ public class ItemControlManager {
 	public boolean isTradable(ItemStack stack) {
 		boolean allowedBlacklist = isAllowedBlacklist(stack);
 		
-		return mode == ItemControlMode.BLACKLIST ? allowedBlacklist : !allowedBlacklist;
+		return (mode == ItemControlMode.BLACKLIST) == allowedBlacklist;
 	}
 	
 	@SuppressWarnings("deprecation")

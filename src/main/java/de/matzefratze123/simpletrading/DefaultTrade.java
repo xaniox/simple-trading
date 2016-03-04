@@ -348,7 +348,7 @@ public class DefaultTrade implements Trade {
 		}
 		
 		InventoryView view = event.getView();
-		Inventory inventory = null;
+		Inventory inventory;
 		int rawSlot = event.getRawSlot();
 		
 		if (view.getTopInventory() != null && rawSlot < view.getTopInventory().getSize()) {
@@ -652,7 +652,7 @@ public class DefaultTrade implements Trade {
 	}
 	
 	private void updateInventoryStatus() {
-		ItemStack statusStack = null;
+		ItemStack statusStack;
 		String loreLine;
 		boolean isConfirmed;
 		boolean usesVault = plugin.usesVault();
@@ -712,7 +712,7 @@ public class DefaultTrade implements Trade {
 		DECLINE,
 		MOVE_ITEM_TO_PLAYER_INVENTORY,
 		MOVE_ITEM_TO_TRADE_INVENTORY,
-		NOTHING;
+		NOTHING
 		
 	}
 	

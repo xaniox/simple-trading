@@ -26,7 +26,7 @@ public enum Permissions {
 	private static final String PREFIX = "simpletrading.";
 	private String subPermission;
 	
-	private Permissions(String subPermission) {
+	Permissions(String subPermission) {
 		this.subPermission = subPermission;
 	}
 	

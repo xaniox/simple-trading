@@ -161,7 +161,7 @@ public class TradeFactory implements Listener {
 			return;
 		}
 		
-		TradePlayer tradePlayer = null;
+		TradePlayer tradePlayer;
 		if (trade.getInitiator().getPlayer() == who) {
 			tradePlayer = trade.getInitiator();
 		} else if (trade.getPartner().getPlayer() == who) {

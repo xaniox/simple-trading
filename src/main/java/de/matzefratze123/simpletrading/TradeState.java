@@ -22,6 +22,6 @@ public enum TradeState {
 	REQUESTED,
 	TRADING,
 	CANCELLED, 
-	CONTRACTED;
+	CONTRACTED
 	
 }
