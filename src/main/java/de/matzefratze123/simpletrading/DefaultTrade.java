@@ -469,7 +469,7 @@ public class DefaultTrade implements Trade {
 		if (action == TradeAction.MOVE_ITEM_TO_PLAYER_INVENTORY || action == TradeAction.MOVE_ITEM_TO_TRADE_INVENTORY) {
 			ItemStack stack = event.getCurrentItem();
 			
-			if (!controlManager.isTradeable(stack)) {
+			if (!controlManager.isTradable(stack)) {
 				// This item is not tradeable
 				player.sendMessage(ChatColor.RED + "You cannot trade this item!");
 				return;

@@ -48,7 +48,7 @@ public class ItemControlManager {
 		this.lores = config.getItemControlLoreList();
 	}
 
-	public boolean isTradeable(ItemStack stack) {
+	public boolean isTradable(ItemStack stack) {
 		boolean allowedBlacklist = isAllowedBlacklist(stack);
 		
 		return mode == ItemControlMode.BLACKLIST ? allowedBlacklist : !allowedBlacklist;
