@@ -63,6 +63,10 @@ public class ItemControlManager {
 		}
 		
 		ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return true;
+        }
+
 		List<String> lore = meta.getLore();
 		
 		if (lore != null) {
