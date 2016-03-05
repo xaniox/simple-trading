@@ -358,7 +358,12 @@ public class DefaultTrade implements Trade {
 			inventory = view.getBottomInventory();
 		}
 				
-		TradePlayer tradePlayer = initiator.getPlayer() == player ? initiator : partner;
+		TradePlayer tradePlayer = initiator.getPlayer() == player ? initiator : partner.getPlayer() == player ? partner : null;
+        if (tradePlayer == null) {
+            //This event does not belong to this trade
+            return;
+        }
+
 		boolean isPlayerInventory = inventory.getType() == InventoryType.PLAYER;
 		boolean usesVault = plugin.usesVault();
 		
@@ -538,11 +543,15 @@ public class DefaultTrade implements Trade {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        System.out.println("InventoryDragEvent triggered!");
-        System.out.println(event.getInventorySlots());
-        System.out.println(event.getNewItems());
-        System.out.println(event.getCursor());
-        System.out.println(event.getType().name());
+        Player player = (Player) event.getWhoClicked();
+
+        TradePlayer tradePlayer = initiator.getPlayer() == player ? initiator : partner.getPlayer() == player ? partner : null;
+        if (tradePlayer == null) {
+            //This event does not belong to this trade
+            return;
+        }
+
+        event.setCancelled(true);
     }
 	
 	private void declineAll() {
