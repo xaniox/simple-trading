@@ -19,6 +19,7 @@ package de.matzefratze123.simpletrading;
 
 import java.util.List;
 
+import de.matzefratze123.simpletrading.config.TradeConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -78,7 +79,8 @@ public class CommandTrade implements CommandExecutor {
 			Player other = trade.getInitiator().getPlayer() == player ? trade.getPartner().getPlayer() : trade.getInitiator().getPlayer();
 			
 			int maxDistance = main.getConfiguration().getMaximumTradeDistance();
-			if (player.getWorld() != other.getWorld() || player.getLocation().distanceSquared(other.getLocation()) > maxDistance * 2) {
+			if ((player.getWorld() != other.getWorld() || player.getLocation().distanceSquared(other.getLocation()) > maxDistance * 2)
+                    && maxDistance != TradeConfiguration.NO_MAX_DISTANCE) {
 				player.sendMessage(ChatColor.RED + "Your partner is too far away!");
 				return true;
 			}
@@ -169,7 +171,8 @@ public class CommandTrade implements CommandExecutor {
 			}
 			
 			int maxDistance = main.getConfiguration().getMaximumTradeDistance();
-			if (player.getWorld() != tradePartner.getWorld() || player.getLocation().distanceSquared(tradePartner.getLocation()) > maxDistance * 2 ) {
+			if ((player.getWorld() != tradePartner.getWorld() || player.getLocation().distanceSquared(tradePartner.getLocation()) > maxDistance * 2) &&
+                    maxDistance != TradeConfiguration.NO_MAX_DISTANCE) {
 				player.sendMessage(ChatColor.RED + "Your partner is too far away!");
 				return true;
 			}

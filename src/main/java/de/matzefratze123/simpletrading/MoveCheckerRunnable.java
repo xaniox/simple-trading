@@ -66,7 +66,7 @@ public class MoveCheckerRunnable implements Runnable {
 							.distanceSquared(trade.getPartner().getPlayer().getLocation());
 					
 					final int maxDistance = config.getMaximumTradeDistance();
-					if (distanceSquared > Math.pow(maxDistance, 2)) {
+					if (maxDistance != TradeConfiguration.NO_MAX_DISTANCE && distanceSquared > Math.pow(maxDistance, 2)) {
 						factory.stopTrade(trade, StopCause.MOVE, player);
 					}
 				}

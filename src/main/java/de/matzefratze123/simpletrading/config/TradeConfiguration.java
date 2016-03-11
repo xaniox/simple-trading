@@ -32,6 +32,7 @@ public class TradeConfiguration {
 	
 	private static final String BLOCKDATA_SEPERATOR = ":";
 	private static final String PLAYERNAME_PLACEHOLDER = "@p";
+    public static final int NO_MAX_DISTANCE = -1;
 	
 	private ItemStackData acceptBlockData;
 	private ItemStackData declineBlockData;
