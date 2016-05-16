@@ -23,6 +23,7 @@ import de.xaniox.simpletrading.i18n.I18N;
 import de.xaniox.simpletrading.i18n.I18NManager;
 import de.xaniox.simpletrading.i18n.Messages;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,6 +31,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.util.List;
 
@@ -113,52 +115,57 @@ public class CommandTrade implements CommandExecutor {
 			main.reload();
             player.sendMessage(i18n.getString(Messages.Command.CONFIGURATIONS_RELOADED));
 		} else if (args[0].equalsIgnoreCase("sign")) {
-			if (!player.hasPermission(Permissions.SIGN.getPermission())) {
+            if (!player.hasPermission(Permissions.SIGN.getPermission())) {
                 player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
-				return true;
-			}
-			
-			int loreIndex = 0;
-			
-			if (args.length > 1) {
-				try {
-					loreIndex = Integer.parseInt(args[1]) - 1;
-				} catch (NumberFormatException nfe) {
+                return true;
+            }
+
+            int loreIndex = 0;
+
+            if (args.length > 1) {
+                try {
+                    loreIndex = Integer.parseInt(args[1]) - 1;
+                } catch (NumberFormatException nfe) {
                     player.sendMessage(i18n.getVarString(Messages.Command.NOT_A_NUMBER)
-                        .setVariable("number", args[1])
-                        .toString());
-					return true;
-				}
-			}
-			
-			List<String> lores = main.getConfiguration().getItemControlLoreList();
-			if (loreIndex >= lores.size()) {
+                            .setVariable("number", args[1])
+                            .toString());
+                    return true;
+                }
+            }
+
+            List<String> lores = main.getConfiguration().getItemControlLoreList();
+            if (loreIndex >= lores.size()) {
                 player.sendMessage(i18n.getVarString(Messages.Command.NO_LORE_WITH_NUMBER)
-                    .setVariable("number", String.valueOf(loreIndex + 1))
-                    .toString());
-				return true;
-			}
-			
-			String lore = lores.get(loreIndex);
-			ItemStack stack = player.getItemInHand();
-			
-			if (stack == null) {
+                        .setVariable("number", String.valueOf(loreIndex + 1))
+                        .toString());
+                return true;
+            }
+
+            String lore = lores.get(loreIndex);
+            ItemStack stack = player.getItemInHand();
+
+            if (stack == null) {
                 player.sendMessage(i18n.getString(Messages.Command.NO_ITEM_IN_HAND));
-				return true;
-			}
-			
-			ItemMeta meta = stack.getItemMeta();
-			List<String> itemLore = meta.getLore();
-			if (itemLore == null) {
-				itemLore = Lists.newArrayList();
-			}
-			
-			itemLore.add(lore);
-			meta.setLore(itemLore);
-			
-			stack.setItemMeta(meta);
-			player.setItemInHand(stack);
+                return true;
+            }
+
+            ItemMeta meta = stack.getItemMeta();
+            List<String> itemLore = meta.getLore();
+            if (itemLore == null) {
+                itemLore = Lists.newArrayList();
+            }
+
+            itemLore.add(lore);
+            meta.setLore(itemLore);
+
+            stack.setItemMeta(meta);
+            player.setItemInHand(stack);
             player.sendMessage(i18n.getString(Messages.Command.LORE_APPLIED));
+        } else if (args[0].equalsIgnoreCase("version")) {
+            PluginDescriptionFile desc = main.getDescription();
+
+            player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "SimpleTrading " + ChatColor.GREEN + "v" + desc.getVersion()
+                    + ChatColor.GRAY + " by " + ChatColor.GREEN + "Matze" + ChatColor.GRAY + " (@xaniox/@matzefratze123)");
 		} else {
 			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
                 player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
