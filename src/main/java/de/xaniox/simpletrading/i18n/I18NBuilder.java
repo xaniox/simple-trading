@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 /**
  * A simple builder for building I18N objects
  * 
- * @author matzefratze123
+ * @author xaniox
  */
 public final class I18NBuilder {
 
