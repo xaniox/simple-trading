@@ -4,12 +4,12 @@
   <artifactId>simpletrading</artifactId>
   <version>1.2</version>
   <name>SimpleTrading</name>
-  <inceptionYear>2015</inceptionYear>
+  <inceptionYear>2015-2016</inceptionYear>
   <description>Allow your players to safely trade with each other</description>
   <url>http://dev.bukkit.org/bukkit-plugins/simpletrading/</url>
   <properties>
     <project.encoding>UTF-8</project.encoding>
-    <project.author>matzefratze123</project.author>
+    <project.author>Matthias Werning</project.author>
     <mainClass>de.xaniox.simpletrading.SimpleTrading</mainClass>
   </properties>
   <build>
