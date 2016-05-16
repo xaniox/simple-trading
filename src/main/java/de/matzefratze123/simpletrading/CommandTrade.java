@@ -17,11 +17,12 @@
  */
 package de.matzefratze123.simpletrading;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import de.matzefratze123.simpletrading.config.TradeConfiguration;
+import de.matzefratze123.simpletrading.i18n.I18N;
+import de.matzefratze123.simpletrading.i18n.I18NManager;
+import de.matzefratze123.simpletrading.i18n.Messages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,13 +31,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.google.common.collect.Lists;
-
-import de.matzefratze123.simpletrading.config.MessageConfiguration;
-import de.matzefratze123.simpletrading.config.Messages;
+import java.util.List;
 
 public class CommandTrade implements CommandExecutor {
 
+    private final I18N i18n = I18NManager.getGlobal();
 	private SimpleTrading main;
 	
 	public CommandTrade(SimpleTrading main) {
@@ -51,28 +50,31 @@ public class CommandTrade implements CommandExecutor {
 		}
 		
 		if (!(sender instanceof Player)) {
-			sender.sendMessage("The console cannot initiate a trade");
+			sender.sendMessage(i18n.getString(Messages.Command.ONLY_PLAYER));
 			return true;
 		}
 		
 		Player player = (Player) sender;
 		TradeFactory factory = main.getFactory();
-		MessageConfiguration messageConfig = main.getMessageConfiguration();
-		
+
 		if (args.length < 1) {
-			player.sendMessage(ChatColor.RED + "Usage: /trade <player>");
+            player.sendMessage(i18n.getVarString(Messages.Command.USAGE)
+                .setVariable("usage", "/trade <player>")
+                .toString());
 			return true;
 		}
 		
 		if (args[0].equalsIgnoreCase("accept")) {
 			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
-				player.sendMessage(ChatColor.RED + "You don't have permission!");
+                player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
 				return true;
 			}
 			
 			Trade trade = factory.getTrade(player);
 			if (trade == null || trade.getPartner().getPlayer() != player) {
-				player.sendMessage(messageConfig.getMessage(Messages.NO_PENDING_REQUESTS, player.getName()));
+				player.sendMessage(i18n.getVarString(Messages.General.NO_PENDING_REQUESTS)
+                    .setVariable("player", player.getName())
+                    .toString());
 				return true;
 			}
 			
@@ -81,7 +83,7 @@ public class CommandTrade implements CommandExecutor {
 			int maxDistance = main.getConfiguration().getMaximumTradeDistance();
 			if ((player.getWorld() != other.getWorld() || player.getLocation().distanceSquared(other.getLocation()) > maxDistance * 2)
                     && maxDistance != TradeConfiguration.NO_MAX_DISTANCE) {
-				player.sendMessage(ChatColor.RED + "Your partner is too far away!");
+                player.sendMessage(i18n.getString(Messages.Command.PARTNER_TOO_FAR_AWAY));
 				return true;
 			}
 			
@@ -89,24 +91,30 @@ public class CommandTrade implements CommandExecutor {
 		} else if (args[0].equalsIgnoreCase("decline")) {
 			Trade trade = factory.getTrade(player);
 			if (trade == null || trade.getPartner().getPlayer() != player) {
-				player.sendMessage(messageConfig.getMessage(Messages.NO_PENDING_REQUESTS, player.getName()));
+				player.sendMessage(i18n.getVarString(Messages.General.NO_PENDING_REQUESTS)
+                    .setVariable("player", player.getName())
+                    .toString());
 				return true;
 			}
 			
 			factory.declineTrade(player);
-			trade.getInitiator().getPlayer().sendMessage(messageConfig.getMessage(Messages.DECLINE_REQUEST_MESSAGE, player.getName()));
-			player.sendMessage(messageConfig.getMessage(Messages.DECLINE_MESSAGE, trade.getInitiator().getName()));
+			trade.getInitiator().getPlayer().sendMessage(i18n.getVarString(Messages.General.TRADE_REQUEST_DECLINED)
+                .setVariable("player", player.getName())
+                .toString());
+			player.sendMessage(i18n.getVarString(Messages.General.TRADE_DECLINED)
+                .setVariable("player", trade.getInitiator().getName())
+                .toString());
 		} else if (args[0].equalsIgnoreCase("reload")) {
 			if (!player.hasPermission(Permissions.RELOAD.getPermission())) {
-				player.sendMessage(ChatColor.RED + "You don't have permission!");
+                player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
 				return true;
 			}
 			
 			main.reload();
-			player.sendMessage(ChatColor.GRAY + "Plugin configurations reloaded!");
+            player.sendMessage(i18n.getString(Messages.Command.CONFIGURATIONS_RELOADED));
 		} else if (args[0].equalsIgnoreCase("sign")) {
 			if (!player.hasPermission(Permissions.SIGN.getPermission())) {
-				player.sendMessage(ChatColor.RED + "You don't have permission!");
+                player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
 				return true;
 			}
 			
@@ -116,14 +124,18 @@ public class CommandTrade implements CommandExecutor {
 				try {
 					loreIndex = Integer.parseInt(args[1]) - 1;
 				} catch (NumberFormatException nfe) {
-					player.sendMessage(ChatColor.RED + args[1] + " is not a number!");
+                    player.sendMessage(i18n.getVarString(Messages.Command.NOT_A_NUMBER)
+                        .setVariable("number", args[1])
+                        .toString());
 					return true;
 				}
 			}
 			
 			List<String> lores = main.getConfiguration().getItemControlLoreList();
 			if (loreIndex >= lores.size()) {
-				player.sendMessage(ChatColor.RED + "There is no lore with number " + (loreIndex + 1) + "!");
+                player.sendMessage(i18n.getVarString(Messages.Command.NO_LORE_WITH_NUMBER)
+                    .setVariable("number", String.valueOf(loreIndex + 1))
+                    .toString());
 				return true;
 			}
 			
@@ -131,7 +143,7 @@ public class CommandTrade implements CommandExecutor {
 			ItemStack stack = player.getItemInHand();
 			
 			if (stack == null) {
-				player.sendMessage(ChatColor.RED + "There is no item in your hand!");
+                player.sendMessage(i18n.getString(Messages.Command.NO_ITEM_IN_HAND));
 				return true;
 			}
 			
@@ -146,34 +158,38 @@ public class CommandTrade implements CommandExecutor {
 			
 			stack.setItemMeta(meta);
 			player.setItemInHand(stack);
-			player.sendMessage(ChatColor.GRAY + "Lore has been applied to the item in your hand.");
+            player.sendMessage(i18n.getString(Messages.Command.LORE_APPLIED));
 		} else {
 			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
-				player.sendMessage(ChatColor.RED + "You don't have permission!");
-				return true;
+                player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
+                return true;
 			}
 			
 			String partnerName = args[0];
 			Player tradePartner = Bukkit.getPlayer(partnerName);
 			if (tradePartner == null) {
-				player.sendMessage(ChatColor.RED + "Player with name \'" + partnerName + "\' could not be found.");
+                player.sendMessage(i18n.getVarString(Messages.Command.PLAYER_NOT_FOUND)
+                    .setVariable("player", partnerName)
+                    .toString());
 				return true;
 			}
 			
 			if (tradePartner == player) {
-				player.sendMessage(ChatColor.RED + "You cannot trade with yourself!");
+                player.sendMessage(i18n.getString(Messages.Command.NO_SELF_TRADE));
 				return true;
 			}
 			
 			if (!main.getConfiguration().allowsCreativeTrading() && (player.getGameMode() == GameMode.CREATIVE || tradePartner.getGameMode() == GameMode.CREATIVE)) {
-				player.sendMessage(messageConfig.getMessage(Messages.CREATIVE, tradePartner.getName()));
+                player.sendMessage(i18n.getVarString(Messages.General.PARTNER_IN_CREATIVE)
+                    .setVariable("player", tradePartner.getName())
+                    .toString());
 				return true;
 			}
 			
 			int maxDistance = main.getConfiguration().getMaximumTradeDistance();
 			if ((player.getWorld() != tradePartner.getWorld() || player.getLocation().distanceSquared(tradePartner.getLocation()) > maxDistance * 2) &&
                     maxDistance != TradeConfiguration.NO_MAX_DISTANCE) {
-				player.sendMessage(ChatColor.RED + "Your partner is too far away!");
+                player.sendMessage(i18n.getString(Messages.Command.PARTNER_TOO_FAR_AWAY));
 				return true;
 			}
 			

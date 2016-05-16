@@ -17,18 +17,22 @@
  */
 package de.matzefratze123.simpletrading;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
+import de.matzefratze123.simpletrading.config.TradeConfiguration;
+import de.matzefratze123.simpletrading.i18n.I18N;
+import de.matzefratze123.simpletrading.i18n.I18NManager;
+import de.matzefratze123.simpletrading.i18n.Messages;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
@@ -36,11 +40,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
-import com.google.common.collect.Lists;
-
-import de.matzefratze123.simpletrading.config.MessageConfiguration;
-import de.matzefratze123.simpletrading.config.Messages;
-import de.matzefratze123.simpletrading.config.TradeConfiguration;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("deprecation")
 public class DefaultTrade implements Trade {
@@ -73,20 +74,19 @@ public class DefaultTrade implements Trade {
 	
 	private final SimpleTrading plugin;
 	private final TradeConfiguration config;
-	private final MessageConfiguration messageConfig;
+	private final I18N i18n = I18NManager.getGlobal();
 	private final Economy econ;
 	private final ItemControlManager controlManager;
 	
 	private StateChangedListener listener;
 	private TradeState state;
 	
-	public DefaultTrade(Player initiator, Player partner, TradeConfiguration config, MessageConfiguration messageConfig, Economy econ,
+	public DefaultTrade(Player initiator, Player partner, TradeConfiguration config, Economy econ,
 			ItemControlManager controlManager, SimpleTrading plugin) {
 		this.plugin = plugin;
 		this.initiator = new TradePlayer(initiator);
 		this.partner = new TradePlayer(partner);
 		this.config = config;
-		this.messageConfig = messageConfig;
 		this.econ = econ;
 		this.controlManager = controlManager;
 		this.state = TradeState.REQUESTED;
@@ -164,10 +164,16 @@ public class DefaultTrade implements Trade {
 		if (config.usesXpTrading()) {
 			expInfoItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
 			ItemMeta expInfoMeta = expInfoItemStack.getItemMeta();
-			expInfoMeta.setDisplayName(ChatColor.DARK_GREEN + "Experience Trades");
+			expInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.EXP_INFO_TITLE));
 			List<String> expLore = Lists.newArrayList();
-			expLore.add(getOfferLoreString(getGenitive(initiator.getName()), "0"));
-			expLore.add(getOfferLoreString(getGenitive(partner.getName()), "0"));
+			expLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                    .setVariable("player", initiator.getName())
+                    .setVariable("offer", "0")
+                    .toString());
+			expLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                    .setVariable("player", partner.getName())
+                    .setVariable("offer", "0")
+                    .toString());
 			expInfoMeta.setLore(expLore);
 			expInfoItemStack.setItemMeta(expInfoMeta);
 		} else {
@@ -176,18 +182,18 @@ public class DefaultTrade implements Trade {
 		
 		ItemStack acceptItemStack = config.getAcceptBlockData().newItemStack(1);
 		ItemMeta acceptMeta = acceptItemStack.getItemMeta();
-		acceptMeta.setDisplayName(ChatColor.GREEN + "Accept Trade");
+		acceptMeta.setDisplayName(i18n.getString(Messages.Inventory.ACCEPT_TRADE_TITLE));
 		acceptItemStack.setItemMeta(acceptMeta);
 		
 		ItemStack unconfirmedStatusItemStack = UNCONFIRMED_STATUS_MATERIAL_DATA.toItemStack(1);
 		ItemMeta unconfirmedStatusMeta = unconfirmedStatusItemStack.getItemMeta();
-		unconfirmedStatusMeta.setDisplayName(ChatColor.RED + "Trade Status");
-		unconfirmedStatusMeta.setLore(Lists.newArrayList(ChatColor.WHITE + "Waiting for other player to accept"));
+		unconfirmedStatusMeta.setDisplayName(i18n.getString(Messages.Inventory.TRADE_STATUS_TITLE));
+		unconfirmedStatusMeta.setLore(Lists.newArrayList(i18n.getString(Messages.Inventory.WAITING_FOR_OTHER_PLAYER_LORE)));
 		unconfirmedStatusItemStack.setItemMeta(unconfirmedStatusMeta);
 		
 		ItemStack declineItemStack = config.getDeclineBlockData().newItemStack(1);
 		ItemMeta declineMeta = declineItemStack.getItemMeta();
-		declineMeta.setDisplayName(ChatColor.RED + "Decline Trade");
+		declineMeta.setDisplayName(i18n.getString(Messages.Inventory.DECLINE_TRADE_TITLE));
 		declineItemStack.setItemMeta(declineMeta);
 		
 		ItemStack moneyInfoItemStack = null;
@@ -199,32 +205,43 @@ public class DefaultTrade implements Trade {
 		if (usesVault) {
 			moneyInfoItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta moneyMeta = moneyInfoItemStack.getItemMeta();
-			moneyMeta.setDisplayName(ChatColor.GOLD + "Money Trades");
+			moneyMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
 			List<String> moneyLore = Lists.newArrayList();
-			moneyLore.add(getOfferLoreString(getGenitive(initiator.getName()), econ.format(0)));
-			moneyLore.add(getOfferLoreString(getGenitive(partner.getName()), econ.format(0)));
+			moneyLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                    .setVariable("player", initiator.getName())
+                    .setVariable("offer", econ.format(0))
+                    .toString());
+			moneyLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                    .setVariable("player", partner.getName())
+                    .setVariable("offer", econ.format(0))
+                    .toString());
 			moneyMeta.setLore(moneyLore);
 			moneyInfoItemStack.setItemMeta(moneyMeta);
 			
 			List<String> addMoneyLore = Lists.newArrayList();
-			addMoneyLore.add(ChatColor.GRAY + "Left-Click to add money");
-			addMoneyLore.add(ChatColor.GRAY + "Right-Click to remove money");
-			
+			addMoneyLore.add(i18n.getString(Messages.Inventory.ADD_MONEY_LORE));
+
 			add50ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta meta50 = add50ItemStack.getItemMeta();
-			meta50.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(50));
+			meta50.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_50_LORE)
+                    .setVariable("money", econ.format(50))
+                    .toString());
 			meta50.setLore(addMoneyLore);
 			add50ItemStack.setItemMeta(meta50);
 			
 			add100ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta meta100 = add100ItemStack.getItemMeta();
-			meta100.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(100));
+			meta100.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_100_LORE)
+                    .setVariable("money", econ.format(100))
+                    .toString());
 			meta100.setLore(addMoneyLore);
 			add100ItemStack.setItemMeta(meta100);
 			
 			add500ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta meta500 = add500ItemStack.getItemMeta();
-			meta500.setDisplayName(ChatColor.WHITE + "Add/Remove " + econ.format(500));
+			meta500.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_500_LORE)
+                    .setVariable("money", econ.format(500))
+                    .toString());
 			meta500.setLore(addMoneyLore);
 			add500ItemStack.setItemMeta(meta500);
 		}
@@ -234,10 +251,9 @@ public class DefaultTrade implements Trade {
 		if (config.usesXpTrading()) {
 			addExpLevelItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
 			ItemMeta addExpLevelMeta = addExpLevelItemStack.getItemMeta();
-			addExpLevelMeta.setDisplayName(ChatColor.WHITE + "Add/Remove one exp level");
+			addExpLevelMeta.setDisplayName(i18n.getString(Messages.Inventory.ADD_EXP_TITLE));
 			List<String> addExpLevelLore = Lists.newArrayList();
-			addExpLevelLore.add(ChatColor.GRAY + "Left-Click to add a level");
-			addExpLevelLore.add(ChatColor.GRAY + "Right-Click to remove a level");
+			addExpLevelLore.add(i18n.getString(Messages.Inventory.ADD_EXP_LORE));
 			addExpLevelMeta.setLore(addExpLevelLore);
 			addExpLevelItemStack.setItemMeta(addExpLevelMeta);
 		} else {
@@ -253,19 +269,6 @@ public class DefaultTrade implements Trade {
 		inv.setItem(ADD_100_INDEX, usesVault ? add100ItemStack : seperator);
 		inv.setItem(ADD_500_INDEX, usesVault ? add500ItemStack : seperator);
 		inv.setItem(ADD_EXP_LEVEL_INDEX, addExpLevelItemStack);
-	}
-	
-	private String getGenitive(String name) {
-		name += '\'';
-		if (!name.endsWith("s")) {
-			name += 's';
-		}
-		
-		return name;
-	}
-	
-	private String getOfferLoreString(String name, String value) {
-		return ChatColor.DARK_GRAY + name + " offers: " + ChatColor.GRAY + ChatColor.BOLD + value;
 	}
 	
 	@Override
@@ -295,28 +298,44 @@ public class DefaultTrade implements Trade {
 		
 		switch (cause) {
 		case DEATH:
-			other.getPlayer().sendMessage(messageConfig.getMessage(Messages.DEATH_MESSAGE, who.getName()));
+			other.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_DEATH)
+                .setVariable("player", who.getName())
+                .toString());
 			break;
 		case INVENTORY_CLOSE:
-			other.getPlayer().sendMessage(messageConfig.getMessage(Messages.CANCEL_MESSAGE, who.getName()));
-			who.getPlayer().sendMessage(messageConfig.getMessage(Messages.DECLINE_MESSAGE, other.getName()));
+			other.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_CANCEL)
+                .setVariable("player", who.getName())
+                .toString());
+			who.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_DECLINE)
+                .setVariable("player", other.getName())
+                .toString());
 			break;
 		case LEFT_WORLD:
-			other.getPlayer().sendMessage(messageConfig.getMessage(Messages.LEFT_WORLD, who.getName()));
+			other.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_LEFT_WORLD)
+                .setVariable("player", who.getName())
+                .toString());
 			break;
 		case MOVE:
-			other.getPlayer().sendMessage(messageConfig.getMessage(Messages.MOVED_AWAY, who.getName()));
+			other.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_MOVED_AWAY)
+                .setVariable("player", who.getName())
+                .toString());
 			break;
 		case QUIT:
-			other.getPlayer().sendMessage(messageConfig.getMessage(Messages.LEFT_MESSAGE, who.getName()));
+			other.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_PLAYER_LEFT)
+                .setVariable("player", who.getName())
+                .toString());
 			break;
 		case TIMEOUT:
-			who.getPlayer().sendMessage(messageConfig.getMessage(Messages.REQUEST_TIMED_OUT, other.getName()));
-			other.getPlayer().sendMessage(messageConfig.getMessage(Messages.REQUEST_TIMED_OUT, who.getName()));
+			who.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_TIMEOUT)
+                .setVariable("player", other.getName())
+                .toString());
+			other.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_TIMEOUT)
+                .setVariable("player", who.getName())
+                .toString());
 			break;
 		case SERVER_SHUTDOWN:
-			who.getPlayer().sendMessage(ChatColor.RED + "Stopping trade as plugin is shutting down");
-			other.getPlayer().sendMessage(ChatColor.RED + "Stopping trade as plugin is shutting down");
+			who.getPlayer().sendMessage(i18n.getString(Messages.General.CANCEL_SERVER_SHUTDOWN));
+			other.getPlayer().sendMessage(i18n.getString(Messages.General.CANCEL_SERVER_SHUTDOWN));
 		default:
 			break;
 		}
@@ -422,7 +441,7 @@ public class DefaultTrade implements Trade {
 				
 				if (newExpOffer > player.getLevel()) {
 					// Too few exp
-					player.sendMessage(ChatColor.RED + "You do not have enough xp to do this!");
+					player.sendMessage(i18n.getString(Messages.General.NOT_ENOUGH_XP));
 					return;
 				}
 
@@ -433,7 +452,7 @@ public class DefaultTrade implements Trade {
 				newExpOffer--;
 				
 				if (newExpOffer < 0) {
-					player.sendMessage(ChatColor.RED + "You do not provide an exp offer!");
+					player.sendMessage(i18n.getString(Messages.General.NO_XP_OFFER));
 					return;
 				}
 
@@ -456,7 +475,7 @@ public class DefaultTrade implements Trade {
 				
 				if (newMoneyOffer > econ.getBalance(player)) {
 					// Not enough money
-					player.sendMessage(ChatColor.RED + "You do not have sufficient funds to do this!");
+					player.sendMessage(i18n.getString(Messages.General.NOT_ENOUGH_MONEY));
 					return;
 				}
 
@@ -467,7 +486,7 @@ public class DefaultTrade implements Trade {
 				newMoneyOffer -= moneyAdding;
 				
 				if (newMoneyOffer < 0) {
-					player.sendMessage(ChatColor.RED + "Your money offer cannot be negative!");
+					player.sendMessage(i18n.getString(Messages.General.NO_NEGATIVE_MONEY_OFFER));
 					return;
 				}
 
@@ -488,7 +507,7 @@ public class DefaultTrade implements Trade {
 			
 			if (!controlManager.isTradable(stack)) {
 				// This item is not tradeable
-				player.sendMessage(ChatColor.RED + "You cannot trade this item!");
+				player.sendMessage(i18n.getString(Messages.General.CANNOT_TRADE_ITEM));
 				return;
 			}
 			
@@ -600,8 +619,12 @@ public class DefaultTrade implements Trade {
             partnerPlayer.playSound(partnerPlayer.getLocation(), levelUpSound, 1.0F, 1.0F);
         }
 		
-		initiatorPlayer.sendMessage(messageConfig.getMessage(Messages.CONFIRMED, partner.getName()));
-		partnerPlayer.sendMessage(messageConfig.getMessage(Messages.CONFIRMED, initiator.getName()));
+		initiatorPlayer.sendMessage(i18n.getVarString(Messages.General.TRADE_CONFIRMED)
+                .setVariable("player", partnerPlayer.getName())
+                .toString());
+		partnerPlayer.sendMessage(i18n.getVarString(Messages.General.TRADE_CONFIRMED)
+                .setVariable("player", initiator.getName())
+                .toString());
 	}
 	
 	private void transferTradeItems(TradePlayer from, TradePlayer to) {
@@ -628,7 +651,7 @@ public class DefaultTrade implements Trade {
 		}
 		
 		if (hasUntransferredItems) {
-			to.getPlayer().sendMessage(ChatColor.RED + "Your inventory is full! The rest of the items were dropped on the ground");
+			to.getPlayer().sendMessage(i18n.getString(Messages.General.INVENTORY_FULL_ITEMS_DROPPED));
 		}
 	}
 	
@@ -692,35 +715,49 @@ public class DefaultTrade implements Trade {
 		
 		if (initiator.hasAccepted() || partner.hasAccepted()) {
 			statusStack = CONFIRMED_STATUS_MATERIAL_DATA.toItemStack(1);
-			loreLine = "One player has accepted the trade";
+			loreLine = i18n.getString(Messages.Inventory.ONE_PLAYER_ACCEPTED);
 			isConfirmed = true;
 		} else {
 			statusStack = UNCONFIRMED_STATUS_MATERIAL_DATA.toItemStack(1);
-			loreLine = "Waiting for other player to accept";
+			loreLine = i18n.getString(Messages.Inventory.WAITING_FOR_OTHER_PLAYER_LORE);
 			isConfirmed = false;
 		}
 		
 		ItemMeta meta = statusStack.getItemMeta();
-		meta.setDisplayName((isConfirmed ? ChatColor.GREEN : ChatColor.RED) + "Trade Status");
+		meta.setDisplayName(i18n.getVarString(Messages.Inventory.TRADE_STATUS_TITLE)
+                .setVariable("state-color", String.valueOf(isConfirmed ? ChatColor.GREEN : ChatColor.RED))
+                .toString());
 		meta.setLore(Lists.newArrayList(ChatColor.WHITE + loreLine));
 		statusStack.setItemMeta(meta);
 		
 		ItemStack expInfo = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
 		ItemMeta expInfoMeta = expInfo.getItemMeta();
-		expInfoMeta.setDisplayName(ChatColor.DARK_GREEN + "Experience Trades");
+		expInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.EXP_INFO_TITLE));
 		List<String> expInfoLore = Lists.newArrayList();
-		expInfoLore.add(getOfferLoreString(getGenitive(initiator.getName()), String.valueOf(initiator.getExpOffer())));
-		expInfoLore.add(getOfferLoreString(getGenitive(partner.getName()), String.valueOf(partner.getExpOffer())));
+		expInfoLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                .setVariable("player", initiator.getName())
+                .setVariable("offer", String.valueOf(initiator.getExpOffer()))
+                .toString());
+		expInfoLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                .setVariable("player", partner.getName())
+                .setVariable("offer", String.valueOf(partner.getExpOffer()))
+                .toString());
 		expInfoMeta.setLore(expInfoLore);
 		expInfo.setItemMeta(expInfoMeta);
 		
 		if (usesVault) {
 			ItemStack moneyInfo = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta moneyInfoMeta = moneyInfo.getItemMeta();
-			moneyInfoMeta.setDisplayName(ChatColor.GOLD + "Money Trades");
+			moneyInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
 			List<String> moneyInfoLore = Lists.newArrayList();
-			moneyInfoLore.add(getOfferLoreString(getGenitive(initiator.getName()), econ.format(initiator.getMoneyOffer())));
-			moneyInfoLore.add(getOfferLoreString(getGenitive(partner.getName()), econ.format(partner.getMoneyOffer())));
+			moneyInfoLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                    .setVariable("player", initiator.getName())
+                    .setVariable("offer", econ.format(initiator.getMoneyOffer()))
+                    .toString());
+			moneyInfoLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
+                    .setVariable("player", partner.getName())
+                    .setVariable("offer", econ.format(partner.getMoneyOffer()))
+                    .toString());
 			moneyInfoMeta.setLore(moneyInfoLore);
 			moneyInfo.setItemMeta(moneyInfoMeta);
 			

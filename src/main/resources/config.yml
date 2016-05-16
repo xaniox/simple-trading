@@ -9,6 +9,21 @@ inventory:
   # Specifies the inventory-gui name while trading
   # Note: Use @p as a placeholder for the playername
   name: 'SimpleTrading - @p'
+localization:
+  # The language this plugin is using. Currently
+  # an english and german translation is available
+  #
+  # Possible values:
+  # en_US - English
+  # de_DE - German
+  #
+  # If you want to help with the translation of SimpleTrading
+  # feel free to translate it into your own language.
+  # For doing this, use the file located under
+  # /language/locale_en_US.yml as a template.
+  # Your translated file should have the following
+  # format: locale_<language-code>_<country-code>.yml
+  locale: en_US
 global:
   # The maximum distance where players are able to initiate a trade
   max-distance: 15
@@ -38,3 +53,5 @@ item-control:
   # control-mode setting
   item-lore:
   - '[Untradeable]'
+
+config-version: 1

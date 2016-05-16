@@ -18,6 +18,7 @@
 package de.matzefratze123.simpletrading.config;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
@@ -33,10 +34,14 @@ public class TradeConfiguration {
 	private static final String BLOCKDATA_SEPERATOR = ":";
 	private static final String PLAYERNAME_PLACEHOLDER = "@p";
     public static final int NO_MAX_DISTANCE = -1;
-	
-	private ItemStackData acceptBlockData;
+    public static final int CURRENT_CONFIG_VERSION = 1;
+    public static final String DESTINATION_FILE_NAME = "config.yml";
+    public static final String CLASSPATH_RESOURCE_NAME = "/config.yml";
+
+    private ItemStackData acceptBlockData;
 	private ItemStackData declineBlockData;
 	private ItemStackData seperatorBlockData;
+    private Locale locale;
 	private String inventoryName;
 	private int maximumTradeDistance;
 	private boolean allowCreativeTrading;
@@ -55,7 +60,11 @@ public class TradeConfiguration {
 		acceptBlockData = ItemStackData.fromConfigString(blockSection.getString("accept", "ink_sack:10"), BLOCKDATA_SEPERATOR);
 		declineBlockData = ItemStackData.fromConfigString(blockSection.getString("decline", "ink_sack:1"), BLOCKDATA_SEPERATOR);
 		seperatorBlockData = ItemStackData.fromConfigString(blockSection.getString("seperator", "iron_fence"), BLOCKDATA_SEPERATOR);
-		
+
+        ConfigurationSection localizationSection = config.getConfigurationSection("localization");
+        String localeString = localizationSection.getString("locale");
+        locale = parseLocale(localeString);
+
 		ConfigurationSection inventorySection = config.getConfigurationSection("inventory");
 		inventoryName = inventorySection.getString("name", "SimpleTrading - @");
 		
@@ -76,6 +85,26 @@ public class TradeConfiguration {
 		
 		controlLores = itemControlSection.getStringList("item-lore");
 	}
+
+    private static Locale parseLocale(String localeString) {
+        String[] parts = localeString.split("_");
+
+        String language = parts[0];
+        String country = parts.length > 1 ? parts[1] : null;
+        String variant = parts.length > 2 ? parts[2] : null;
+
+        Locale locale;
+
+        if (country == null && variant == null) {
+            locale = new Locale(language);
+        } else if (country != null && variant == null) {
+            locale = new Locale(language, country);
+        } else {
+            locale = new Locale(language, country, variant);
+        }
+
+        return locale;
+    }
 	
 	public ItemStackData getAcceptBlockData() {
 		return acceptBlockData;
@@ -88,8 +117,12 @@ public class TradeConfiguration {
 	public ItemStackData getSeperatorBlockData() {
 		return seperatorBlockData;
 	}
-	
-	public String getInventoryName(String nameReplacement) {
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public String getInventoryName(String nameReplacement) {
 		return inventoryName.replace(PLAYERNAME_PLACEHOLDER, nameReplacement);
 	}
 	

@@ -17,10 +17,14 @@
  */
 package de.matzefratze123.simpletrading;
 
-import java.util.Set;
-
+import com.google.common.collect.Sets;
+import de.matzefratze123.simpletrading.DefaultTrade.StateChangedListener;
+import de.matzefratze123.simpletrading.Trade.StopCause;
+import de.matzefratze123.simpletrading.config.TradeConfiguration;
+import de.matzefratze123.simpletrading.i18n.I18N;
+import de.matzefratze123.simpletrading.i18n.I18NManager;
+import de.matzefratze123.simpletrading.i18n.Messages;
 import net.milkbowl.vault.economy.Economy;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -33,36 +37,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.google.common.collect.Sets;
-
-import de.matzefratze123.simpletrading.DefaultTrade.StateChangedListener;
-import de.matzefratze123.simpletrading.Trade.StopCause;
-import de.matzefratze123.simpletrading.config.MessageConfiguration;
-import de.matzefratze123.simpletrading.config.Messages;
-import de.matzefratze123.simpletrading.config.TradeConfiguration;
+import java.util.Set;
 
 public class TradeFactory implements Listener {
-	
+
+    private final I18N i18n = I18NManager.getGlobal();
 	private final SimpleTrading plugin;
 	private final TradeConfiguration config;
 	private final Set<Trade> trades;
-	private final MessageConfiguration messageConfig;
 	private final Economy econ;
 	private final ItemControlManager controlManager;
 	
-	public TradeFactory(SimpleTrading plugin, MessageConfiguration messageConfig, TradeConfiguration config, Economy econ, ItemControlManager controlManager) {
+	public TradeFactory(SimpleTrading plugin, TradeConfiguration config, Economy econ, ItemControlManager controlManager) {
 		this.plugin = plugin;
 		this.config = config;
 		this.trades = Sets.newLinkedHashSet();
-		this.messageConfig = messageConfig;
 		this.econ = econ;
 		this.controlManager = controlManager;
 		
@@ -75,10 +68,12 @@ public class TradeFactory implements Listener {
 		if (isInvolvedInTrade(initiator)) {
 			trade = null;
 		} else if (isInvolvedInTrade(partner)) {
-			initiator.sendMessage(messageConfig.getMessage(Messages.IS_INVOLVED, partner.getName()));
+            initiator.sendMessage(i18n.getVarString(Messages.General.PARTNER_ALREADY_INVOLVED)
+                .setVariable("player", partner.getName())
+                .toString());
 			trade = null;
 		} else {
-			DefaultTrade simpleTrade = new DefaultTrade(initiator, partner, config, messageConfig, econ, controlManager, plugin);
+			DefaultTrade simpleTrade = new DefaultTrade(initiator, partner, config, econ, controlManager, plugin);
 			
 			int timeout = config.getTimeout();
 			final BukkitTask timeoutTask = Bukkit.getScheduler().runTaskLater(plugin, new TimeoutRunnable(simpleTrade), timeout * 20L);
@@ -107,8 +102,12 @@ public class TradeFactory implements Listener {
 			trades.add(simpleTrade);
 			trade = simpleTrade;
 			
-			initiator.sendMessage(messageConfig.getMessage(Messages.TRADE_REQUEST, partner.getName()));
-			partner.sendMessage(messageConfig.getMessage(Messages.REQUESTED_MESSAGE, initiator.getName()));
+			initiator.sendMessage(i18n.getVarString(Messages.General.TRADE_REQUESTED)
+                    .setVariable("player", partner.getName())
+                    .toString());
+			partner.sendMessage(i18n.getVarString(Messages.General.TRADE_REQUEST_RECEIVED)
+                    .setVariable("player", initiator.getName())
+                    .toString());
 		}
 		
 		return trade;
@@ -128,7 +127,9 @@ public class TradeFactory implements Listener {
 		trades.remove(trade);
 		
 		Player initiator = trade.getInitiator().getPlayer();
-		initiator.sendMessage(messageConfig.getMessage(Messages.DECLINE_MESSAGE, decliner.getName()));
+        initiator.sendMessage(i18n.getVarString(Messages.General.TRADE_REQUEST_DECLINED)
+            .setVariable("player", decliner.getName())
+            .toString());
 	}
 	
 	private void timeoutTrade(Trade trade) {
@@ -151,7 +152,9 @@ public class TradeFactory implements Listener {
 		}
 		
 		Player initiator = trade.getInitiator().getPlayer();
-		initiator.sendMessage(messageConfig.getMessage(Messages.ACCEPTED, accepter.getName()));
+        initiator.sendMessage(i18n.getVarString(Messages.General.TRADE_ACCEPTED)
+            .setVariable("player", accepter.getName())
+            .toString());
 		
 		trade.accept();
 	}
@@ -214,7 +217,9 @@ public class TradeFactory implements Listener {
 		
 		Player tradePartner = (Player) interacted;
 		if (!config.allowsCreativeTrading() && (player.getGameMode() == GameMode.CREATIVE || tradePartner.getGameMode() == GameMode.CREATIVE)) {
-			player.sendMessage(messageConfig.getMessage(Messages.CREATIVE, tradePartner.getName()));
+            player.sendMessage(i18n.getVarString(Messages.General.PARTNER_IN_CREATIVE)
+                .setVariable("player", tradePartner.getName())
+                .toString());
 			return;
 		}
 		

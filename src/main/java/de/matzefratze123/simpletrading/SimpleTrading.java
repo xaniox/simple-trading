@@ -17,31 +17,44 @@
  */
 package de.matzefratze123.simpletrading;
 
-import java.io.File;
-import java.io.IOException;
-
+import de.matzefratze123.simpletrading.Trade.StopCause;
+import de.matzefratze123.simpletrading.config.TradeConfiguration;
+import de.matzefratze123.simpletrading.i18n.I18N;
+import de.matzefratze123.simpletrading.i18n.I18NBuilder;
+import de.matzefratze123.simpletrading.i18n.I18NManager;
 import net.milkbowl.vault.economy.Economy;
-
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.mcstats.Metrics;
 
-import de.matzefratze123.simpletrading.Trade.StopCause;
-import de.matzefratze123.simpletrading.config.MessageConfiguration;
-import de.matzefratze123.simpletrading.config.TradeConfiguration;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.logging.Level;
 
 public class SimpleTrading extends JavaPlugin {
-	
+
+    private static final String I18N_CLASSPATH_FOLDER = "i18n/";
 	private static final String VAULT_PLUGIN_NAME = "Vault";
 	
 	private File messageConfigFile;
 	private TradeConfiguration config;
-	private MessageConfiguration messageConfig;
+	private I18NManager i18nManager;
 	private TradeFactory factory;
 	private BukkitTask movementTask;
 	private ItemControlManager controlManager;
@@ -52,23 +65,36 @@ public class SimpleTrading extends JavaPlugin {
 	public void onEnable() {
 		File configFile = new File(this.getDataFolder(), "config.yml");
 		messageConfigFile = new File(this.getDataFolder(), "messages.yml");
-		
-		if (!configFile.exists()) {
-			saveDefaultConfig();
-		}
+
+        if (!configFile.exists()) {
+            saveDefaultConfig();
+        }
+
+        Path dataFolder = getDataFolder().toPath();
+        Configuration checkConfig = YamlConfiguration.loadConfiguration(configFile);
+        checkConfigVersions(checkConfig, dataFolder);
 		
 		if (!messageConfigFile.exists()) {
 			saveResource("messages.yml", false);
-		} 
-		
+		}
+
+        File i18nFolder = new File(getDataFolder(), "i18n");
+        i18nFolder.mkdirs();
+
 		config = new TradeConfiguration(getConfig());
-		messageConfig = new MessageConfiguration(YamlConfiguration.loadConfiguration(messageConfigFile));
+        I18NManager.setGlobalBuilder(I18NBuilder.builder()
+            .setFileSystemFolder(i18nFolder)
+            .setClasspathFolder(I18N_CLASSPATH_FOLDER)
+            .setLoadingMode(I18N.LoadingMode.FILE_SYSTEM)
+            .setLocale(config.getLocale())
+            .setLogger(getLogger()));
+        i18nManager = new I18NManager();
 		
 		initVaultHook();
 		
 		controlManager = new ItemControlManager(config);
 		
-		factory = new TradeFactory(this, messageConfig, config, econ, controlManager);
+		factory = new TradeFactory(this, config, econ, controlManager);
 		
 		getCommand("trade").setExecutor(new CommandTrade(this));
 		movementTask = getServer().getScheduler().runTaskTimer(this, new MoveCheckerRunnable(factory, config), 20L, 30L);
@@ -79,8 +105,11 @@ public class SimpleTrading extends JavaPlugin {
 		} catch (IOException e) {
 			getLogger().warning("Could not start metrics service: " + e);
 		}
-		
-		getLogger().info("Plugin successfully enabled");
+
+        PluginDescriptionFile pdf = getDescription();
+        String version = pdf.getVersion();
+
+        getLogger().info("SimpleTrading v" + version + " enabled!");
 	}
 	
 	@Override
@@ -95,6 +124,27 @@ public class SimpleTrading extends JavaPlugin {
 			factory.stopAllTrades(StopCause.SERVER_SHUTDOWN);
 		}
 	}
+
+    private void checkConfigVersions(Configuration config, Path dataFolder) {
+        if (config.getInt("config-version", 0) < TradeConfiguration.CURRENT_CONFIG_VERSION) {
+            Path configSource = dataFolder.resolve(TradeConfiguration.DESTINATION_FILE_NAME);
+            Path configTarget = dataFolder.resolve("config_old.yml");
+
+            try {
+                Files.move(configSource, configTarget, StandardCopyOption.REPLACE_EXISTING);
+                URL configResource = getClass().getResource(TradeConfiguration.CLASSPATH_RESOURCE_NAME);
+
+                copyResource(configResource, configSource.toFile());
+
+                ConsoleCommandSender sender = Bukkit.getConsoleSender();
+                sender.sendMessage(ChatColor.RED + "Due to a SimpleTrading update your old configuration has been renamed");
+                sender.sendMessage(ChatColor.RED + "to config_old.yml and a new one has been generated. Make sure to");
+                sender.sendMessage(ChatColor.RED + "apply your old changes to the new config");
+            } catch (IOException e) {
+                getLogger().log(Level.SEVERE, "Could not create updated configuration due to an IOException", e);
+            }
+        }
+    }
 
 	public void initVaultHook() {
 		PluginManager pluginManager = getServer().getPluginManager();
@@ -117,10 +167,31 @@ public class SimpleTrading extends JavaPlugin {
 		config.loadByConfiguration(getConfig());
 		
 		Configuration messageConfiguration = YamlConfiguration.loadConfiguration(messageConfigFile);
-		messageConfig.loadByConfiguration(messageConfiguration);
-		
+        i18nManager.reloadAll(config.getLocale());
+
 		controlManager.updateValues(config);
 	}
+
+    public static void copyResource(URL resourceUrl, File destination) throws IOException {
+        URLConnection connection = resourceUrl.openConnection();
+
+        if (!destination.exists()) {
+            destination.getParentFile().mkdirs();
+            destination.createNewFile();
+        }
+
+        final int bufferSize = 1024;
+
+        try (InputStream inStream = connection.getInputStream();
+             FileOutputStream outStream = new FileOutputStream(destination)) {
+            byte[] buffer = new byte[bufferSize];
+
+            int read;
+            while ((read = inStream.read(buffer)) > 0) {
+                outStream.write(buffer, 0, read);
+            }
+        }
+    }
 	
 	public boolean usesVault() {
 		return usingVault;
@@ -137,9 +208,5 @@ public class SimpleTrading extends JavaPlugin {
 	public TradeConfiguration getConfiguration() {
 		return config;
 	}
-	
-	public MessageConfiguration getMessageConfiguration() {
-		return messageConfig;
-	}
-	
+
 }
