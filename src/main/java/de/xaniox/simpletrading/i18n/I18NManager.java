@@ -32,7 +32,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.matzefratze123.simpletrading.i18n;
+package de.xaniox.simpletrading.i18n;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.Validate;

@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.matzefratze123.simpletrading;
+package de.xaniox.simpletrading;
 
 import com.google.common.collect.Lists;
-import de.matzefratze123.simpletrading.config.TradeConfiguration;
-import de.matzefratze123.simpletrading.i18n.I18N;
-import de.matzefratze123.simpletrading.i18n.I18NManager;
-import de.matzefratze123.simpletrading.i18n.Messages;
+import de.xaniox.simpletrading.config.TradeConfiguration;
+import de.xaniox.simpletrading.i18n.I18N;
+import de.xaniox.simpletrading.i18n.I18NManager;
+import de.xaniox.simpletrading.i18n.Messages;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

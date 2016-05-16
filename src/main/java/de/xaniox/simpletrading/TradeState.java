@@ -15,23 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.matzefratze123.simpletrading;
+package de.xaniox.simpletrading;
 
-public enum Permissions {
-		
-	TRADE("trade"),
-	RELOAD("reload"), 
-	SIGN("sign");
+public enum TradeState {
 	
-	private static final String PREFIX = "simpletrading.";
-	private String subPermission;
-	
-	Permissions(String subPermission) {
-		this.subPermission = subPermission;
-	}
-	
-	public String getPermission() {
-		return PREFIX + subPermission;
-	}
+	REQUESTED,
+	TRADING,
+	CANCELLED, 
+	CONTRACTED
 	
 }

@@ -32,10 +32,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.matzefratze123.simpletrading.i18n;
+package de.xaniox.simpletrading.i18n;
 
 import com.google.common.collect.Lists;
-import de.matzefratze123.simpletrading.SimpleTrading;
+import de.xaniox.simpletrading.SimpleTrading;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;

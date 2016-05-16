@@ -10,7 +10,7 @@
   <properties>
     <project.encoding>UTF-8</project.encoding>
     <project.author>matzefratze123</project.author>
-    <mainClass>de.matzefratze123.simpletrading.SimpleTrading</mainClass>
+    <mainClass>de.xaniox.simpletrading.SimpleTrading</mainClass>
   </properties>
   <build>
     <plugins>
@@ -89,7 +89,7 @@
           <relocations>
             <relocation>
               <pattern>org.mcstats</pattern>
-              <shadedPattern>de.matzefratze123.simpletrading.metrics</shadedPattern>
+              <shadedPattern>de.xaniox.simpletrading.metrics</shadedPattern>
             </relocation>
           </relocations>
           <createDependencyReducedPom>false</createDependencyReducedPom>

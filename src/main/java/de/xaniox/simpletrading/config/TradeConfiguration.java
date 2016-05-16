@@ -15,19 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.matzefratze123.simpletrading.config;
+package de.xaniox.simpletrading.config;
 
 import java.util.List;
 import java.util.Locale;
 
+import de.xaniox.simpletrading.ItemControlManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Lists;
-
-import de.matzefratze123.simpletrading.ItemControlManager.ItemControlMode;
 
 public class TradeConfiguration { 
 	
@@ -47,7 +46,7 @@ public class TradeConfiguration {
 	private boolean allowCreativeTrading;
 	private int timeout;
 	private boolean useXpTrading;
-	private ItemControlMode controlMode;
+	private ItemControlManager.ItemControlMode controlMode;
 	private List<ItemStackData> controlItems;
 	private List<String> controlLores;
 	
@@ -75,7 +74,7 @@ public class TradeConfiguration {
 		useXpTrading = globalSection.getBoolean("use-xp-trading", true);
 		
 		ConfigurationSection itemControlSection = config.getConfigurationSection("item-control");
-		controlMode = ItemControlMode.getMode(itemControlSection.getString("control-mode"), ItemControlMode.BLACKLIST);
+		controlMode = ItemControlManager.ItemControlMode.getMode(itemControlSection.getString("control-mode"), ItemControlManager.ItemControlMode.BLACKLIST);
 		List<String> controlItemStringList = itemControlSection.getStringList("item-list");
 		controlItems = Lists.newArrayList();
 		
@@ -142,7 +141,7 @@ public class TradeConfiguration {
 		return useXpTrading;
 	}
 	
-	public ItemControlMode getItemControlMode() {
+	public ItemControlManager.ItemControlMode getItemControlMode() {
 		return controlMode;
 	}
 	

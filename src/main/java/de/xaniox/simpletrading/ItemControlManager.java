@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.matzefratze123.simpletrading;
+package de.xaniox.simpletrading;
 
 import java.util.List;
 
@@ -23,8 +23,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import de.matzefratze123.simpletrading.config.TradeConfiguration;
-import de.matzefratze123.simpletrading.config.TradeConfiguration.ItemStackData;
+import de.xaniox.simpletrading.config.TradeConfiguration;
+import de.xaniox.simpletrading.config.TradeConfiguration.ItemStackData;
 
 public class ItemControlManager {
 	
