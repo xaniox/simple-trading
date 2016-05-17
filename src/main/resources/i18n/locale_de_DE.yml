@@ -36,9 +36,7 @@ inventory:
   add-money-lore: '&7Links-Klicke um mehr Geld zu bieten\n&7Rechts-Klicke um weniger Geld zu bieten'
   add-exp-lore: '&7Links-Klicke um ein Level bieten\n&7Rechts-Klicke um ein Level weniger zu bieten'
   add-exp-title: 'Entferne oder füge ein Level hinzu'
-  add-remove-money-50-lore: '&f$[money] hinzufügen/entfernen'
-  add-remove-money-100-lore: '&f$[money] hinzufügen/entfernen'
-  add-remove-money-500-lore: '&f$[money] hinzufügen/entfernen'
+  add-remove-money-lore: '&f$[money] hinzufügen/entfernen'
 
 command:
   only-player: '&cNur Spieler können diesen Befehl ausführen!'

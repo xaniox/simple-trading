@@ -42,6 +42,9 @@ public class TradeConfiguration {
 	private ItemStackData seperatorBlockData;
     private Locale locale;
 	private String inventoryName;
+    private int moneyValue1;
+    private int moneyValue2;
+    private int moneyValue3;
 	private int maximumTradeDistance;
 	private boolean allowCreativeTrading;
 	private int timeout;
@@ -66,7 +69,10 @@ public class TradeConfiguration {
 
 		ConfigurationSection inventorySection = config.getConfigurationSection("inventory");
 		inventoryName = inventorySection.getString("name", "SimpleTrading - @");
-		
+        moneyValue1 = inventorySection.getInt("money-value-1", 50);
+        moneyValue2 = inventorySection.getInt("money-value-2", 100);
+        moneyValue3 = inventorySection.getInt("money-value-3", 500);
+
 		ConfigurationSection globalSection = config.getConfigurationSection("global");
 		maximumTradeDistance = globalSection.getInt("max-distance", 15);
 		allowCreativeTrading = globalSection.getBoolean("creative-trading", true);
@@ -124,8 +130,20 @@ public class TradeConfiguration {
     public String getInventoryName(String nameReplacement) {
 		return inventoryName.replace(PLAYERNAME_PLACEHOLDER, nameReplacement);
 	}
-	
-	public int getMaximumTradeDistance() {
+
+    public int getMoneyValue1() {
+        return moneyValue1;
+    }
+
+    public int getMoneyValue2() {
+        return moneyValue2;
+    }
+
+    public int getMoneyValue3() {
+        return moneyValue3;
+    }
+
+    public int getMaximumTradeDistance() {
 		return maximumTradeDistance;
 	}
 	

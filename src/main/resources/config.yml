@@ -1,3 +1,9 @@
+########################################
+## -- SimpleTrading  -  Configuration ##
+########################################
+#
+# This is the main configuration file of SimpleTrading
+#
 blocks:
   # Block to accept trade
   accept: 'ink_sack:10'
@@ -9,6 +15,12 @@ inventory:
   # Specifies the inventory-gui name while trading
   # Note: Use @p as a placeholder for the playername
   name: 'SimpleTrading - @p'
+
+  # These key-value sets define the amount of money a
+  # player can add or remove in the trading inventory
+  money-value-1: 50
+  money-value-2: 100
+  money-value-3: 500
 localization:
   # The language this plugin is using. Currently
   # an english and german translation is available
@@ -26,6 +38,7 @@ localization:
   locale: en_US
 global:
   # The maximum distance where players are able to initiate a trade
+  # Set to -1 to disable max distance and world checking
   max-distance: 15
   # Specifies wether trading in creative mode is enabled or not
   creative-trading: true
@@ -38,7 +51,7 @@ item-control:
   # Available modes: blacklist, whitelist
   # Explanation:
   #   blacklist: All items can be traded except the
-  #              items configured to not be.
+  #              items configured not to be.
   #   whitelist: No items can be traded except the
   #              items configured to be.
   control-mode: blacklist
@@ -48,7 +61,7 @@ item-control:
   item-list:
   - 'cake'
   
-  # A list of lores (the description text of a item) marking
+  # A list of lores (the description text of an item) marking
   # an item to be untradable or tradeable depending on your
   # control-mode setting
   item-lore:

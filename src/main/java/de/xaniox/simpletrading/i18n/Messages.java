@@ -82,9 +82,7 @@ public interface Messages {
         public static final String ADD_MONEY_LORE = PREFIX + "add-money-lore";
         public static final String ADD_EXP_LORE = PREFIX + "add-exp-lore";
         public static final String ADD_EXP_TITLE = PREFIX + "add-exp-title";
-        public static final String ADD_REMOVE_MONEY_50_LORE = PREFIX + "add-remove-money-50-lore";
-        public static final String ADD_REMOVE_MONEY_100_LORE = PREFIX + "add-remove-money-100-lore";
-        public static final String ADD_REMOVE_MONEY_500_LORE = PREFIX + "add-remove-money-500-lore";
+        public static final String ADD_REMOVE_MONEY_LORE = PREFIX + "add-remove-money-lore";
 
     }
 

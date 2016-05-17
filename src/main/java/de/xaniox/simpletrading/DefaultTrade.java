@@ -61,9 +61,9 @@ public class DefaultTrade implements Trade {
 	private static final int CONFIRMATION_INFO_INDEX = 4;
 	private static final int DECLINE_TRADE_INDEX = 5;
 	private static final int MONEY_INFO_INDEX = 6;
-	private static final int ADD_50_INDEX = 12;
-	private static final int ADD_100_INDEX = 13;
-	private static final int ADD_500_INDEX = 14;
+	private static final int ADD_MONEY_1_INDEX = 12;
+	private static final int ADD_MONEY_2_INDEX = 13;
+	private static final int ADD_MONEY_3_INDEX = 14;
 	private static final int ADD_EXP_LEVEL_INDEX = 22;
 	
 	private static final float ADD_PITCH = 1.5F;
@@ -197,9 +197,13 @@ public class DefaultTrade implements Trade {
 		declineItemStack.setItemMeta(declineMeta);
 		
 		ItemStack moneyInfoItemStack = null;
-		ItemStack add50ItemStack = null;
-		ItemStack add100ItemStack = null;
-		ItemStack add500ItemStack = null;
+		ItemStack addMoney1ItemStack = null;
+		ItemStack addMoney2ItemStack = null;
+		ItemStack addMoney3ItemStack = null;
+
+        int money1Value = config.getMoneyValue1();
+        int money2Value = config.getMoneyValue2();
+        int money3Value = config.getMoneyValue3();
 		
 		boolean usesVault = plugin.usesVault();
 		if (usesVault) {
@@ -221,29 +225,29 @@ public class DefaultTrade implements Trade {
 			List<String> addMoneyLore = Lists.newArrayList();
 			addMoneyLore.add(i18n.getString(Messages.Inventory.ADD_MONEY_LORE));
 
-			add50ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
-			ItemMeta meta50 = add50ItemStack.getItemMeta();
-			meta50.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_50_LORE)
-                    .setVariable("money", econ.format(50))
+			addMoney1ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta metaMoney1 = addMoney1ItemStack.getItemMeta();
+			metaMoney1.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
+                    .setVariable("money", econ.format(money1Value))
                     .toString());
-			meta50.setLore(addMoneyLore);
-			add50ItemStack.setItemMeta(meta50);
+			metaMoney1.setLore(addMoneyLore);
+			addMoney1ItemStack.setItemMeta(metaMoney1);
 			
-			add100ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
-			ItemMeta meta100 = add100ItemStack.getItemMeta();
-			meta100.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_100_LORE)
-                    .setVariable("money", econ.format(100))
+			addMoney2ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta metaMoney2 = addMoney2ItemStack.getItemMeta();
+			metaMoney2.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
+                    .setVariable("money", econ.format(money2Value))
                     .toString());
-			meta100.setLore(addMoneyLore);
-			add100ItemStack.setItemMeta(meta100);
+			metaMoney2.setLore(addMoneyLore);
+			addMoney2ItemStack.setItemMeta(metaMoney2);
 			
-			add500ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
-			ItemMeta meta500 = add500ItemStack.getItemMeta();
-			meta500.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_500_LORE)
-                    .setVariable("money", econ.format(500))
+			addMoney3ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemMeta metaMoney3 = addMoney3ItemStack.getItemMeta();
+			metaMoney3.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
+                    .setVariable("money", econ.format(money3Value))
                     .toString());
-			meta500.setLore(addMoneyLore);
-			add500ItemStack.setItemMeta(meta500);
+			metaMoney3.setLore(addMoneyLore);
+			addMoney3ItemStack.setItemMeta(metaMoney3);
 		}
 		
 		ItemStack addExpLevelItemStack;
@@ -265,9 +269,9 @@ public class DefaultTrade implements Trade {
 		inv.setItem(CONFIRMATION_INFO_INDEX, unconfirmedStatusItemStack);
 		inv.setItem(DECLINE_TRADE_INDEX, declineItemStack);
 		inv.setItem(MONEY_INFO_INDEX, usesVault ? moneyInfoItemStack : seperator);
-		inv.setItem(ADD_50_INDEX, usesVault ? add50ItemStack : seperator);
-		inv.setItem(ADD_100_INDEX, usesVault ? add100ItemStack : seperator);
-		inv.setItem(ADD_500_INDEX, usesVault ? add500ItemStack : seperator);
+		inv.setItem(ADD_MONEY_1_INDEX, usesVault ? addMoney1ItemStack : seperator);
+		inv.setItem(ADD_MONEY_2_INDEX, usesVault ? addMoney2ItemStack : seperator);
+		inv.setItem(ADD_MONEY_3_INDEX, usesVault ? addMoney3ItemStack : seperator);
 		inv.setItem(ADD_EXP_LEVEL_INDEX, addExpLevelItemStack);
 	}
 	
@@ -397,14 +401,18 @@ public class DefaultTrade implements Trade {
 		if (isPlayerInventory) {
 			action = TradeAction.MOVE_ITEM_TO_TRADE_INVENTORY;
 		} else {
-			if (slot == ADD_50_INDEX) {
-				moneyAdding = 50;
+            int moneyValue1 = config.getMoneyValue1();
+            int moneyValue2 = config.getMoneyValue2();
+            int moneyValue3 = config.getMoneyValue3();
+
+			if (slot == ADD_MONEY_1_INDEX) {
+				moneyAdding = moneyValue1;
 				action = TradeAction.ADD_MONEY;
-			} else if (slot == ADD_100_INDEX) {
-				moneyAdding = 100;
+			} else if (slot == ADD_MONEY_2_INDEX) {
+				moneyAdding = moneyValue2;
 				action = TradeAction.ADD_MONEY;
-			} else if (slot == ADD_500_INDEX) {
-				moneyAdding = 500;
+			} else if (slot == ADD_MONEY_3_INDEX) {
+				moneyAdding = moneyValue3;
 				action = TradeAction.ADD_MONEY;
 			} else if (slot == ADD_EXP_LEVEL_INDEX && config.usesXpTrading()) {
 				action = TradeAction.ADD_EXP;

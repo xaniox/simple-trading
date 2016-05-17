@@ -36,9 +36,7 @@ inventory:
   add-money-lore: '&7Left-Click to add money\n&7Right-Click to remove money'
   add-exp-lore: '&7Left-Click to add a level\n&7Right-Click to remove a level'
   add-exp-title: 'Add/Remove one exp level'
-  add-remove-money-50-lore: '&fAdd/Remove $[money]'
-  add-remove-money-100-lore: '&fAdd/Remove $[money]'
-  add-remove-money-500-lore: '&fAdd/Remove $[money]'
+  add-remove-money-lore: '&fAdd/Remove $[money]'
 
 command:
   only-player: '&cOnly players may execute this command!'
