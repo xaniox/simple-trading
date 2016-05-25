@@ -66,6 +66,7 @@ public interface Messages {
         public static final String ADD_EXP_LORE = PREFIX + "add-exp-lore";
         public static final String ADD_EXP_TITLE = PREFIX + "add-exp-title";
         public static final String ADD_REMOVE_MONEY_LORE = PREFIX + "add-remove-money-lore";
+        public static final String LEVEL_INFO = PREFIX + "level-info";
 
     }
 

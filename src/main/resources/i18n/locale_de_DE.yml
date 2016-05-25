@@ -34,9 +34,10 @@ inventory:
   waiting-for-other-player-lore: '&fWarte darauf das ein anderer Spieler akzeptiert'
   offer-lore: '&8$[player] bietet: &7&l$[offer]'
   add-money-lore: '&7Links-Klicke um mehr Geld zu bieten\n&7Rechts-Klicke um weniger Geld zu bieten'
-  add-exp-lore: '&7Links-Klicke um ein Level bieten\n&7Rechts-Klicke um ein Level weniger zu bieten'
-  add-exp-title: 'Entferne oder füge ein Level hinzu'
+  add-exp-lore: '&7Links-Klicke um $[exp] XP bieten\n&7Rechts-Klicke um $[exp] XP weniger zu bieten'
+  add-exp-title: '&fEntferne oder füge $[exp] XP hinzu'
   add-remove-money-lore: '&f$[money] hinzufügen/entfernen'
+  level-info: "&6&l$[level-diff] Level"
 
 command:
   only-player: '&cNur Spieler können diesen Befehl ausführen!'

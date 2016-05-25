@@ -40,6 +40,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ import java.util.Map;
 public class DefaultTrade implements Trade {
 
 	private static final int INVENTORY_SIZE = 6 * 9;
-	private static final int[] SEPERATOR_INDEXES = { 0, 1, 7, 8, 9, 10, 11, 15, 16, 17, 31, 40, 49 };
+	private static final int[] SEPERATOR_INDEXES = { 0, 1, 7, 8, 9, 13, 17, 22, 31, 40, 49 };
     private static final String[] LEVEL_UP_SEARCH = {"LEVEL_UP", "PLAYER_LEVELUP"};
     private static final String[] CLICK_SEARCH = {"UI_BUTTON_CLICK", "CLICK"};
 	
@@ -61,13 +62,20 @@ public class DefaultTrade implements Trade {
 	private static final int CONFIRMATION_INFO_INDEX = 4;
 	private static final int DECLINE_TRADE_INDEX = 5;
 	private static final int MONEY_INFO_INDEX = 6;
-	private static final int ADD_MONEY_1_INDEX = 12;
-	private static final int ADD_MONEY_2_INDEX = 13;
-	private static final int ADD_MONEY_3_INDEX = 14;
-	private static final int ADD_EXP_LEVEL_INDEX = 22;
+	private static final int ADD_MONEY_1_INDEX = 10;
+	private static final int ADD_MONEY_2_INDEX = 11;
+	private static final int ADD_MONEY_3_INDEX = 12;
+	private static final int ADD_EXP_1_INDEX = 14;
+    private static final int ADD_EXP_2_INDEX = 15;
+    private static final int ADD_EXP_3_INDEX = 16;
 	
 	private static final float ADD_PITCH = 1.5F;
 	private static final float REMOVE_PITCH = 1.0F;
+    private static final DecimalFormat LEVEL_FORMAT = new DecimalFormat("0");
+
+    static {
+        LEVEL_FORMAT.setPositivePrefix("+");
+    }
 	
 	private final TradePlayer initiator;
 	private final TradePlayer partner;
@@ -222,8 +230,9 @@ public class DefaultTrade implements Trade {
 			moneyMeta.setLore(moneyLore);
 			moneyInfoItemStack.setItemMeta(moneyMeta);
 			
-			List<String> addMoneyLore = Lists.newArrayList();
-			addMoneyLore.add(i18n.getString(Messages.Inventory.ADD_MONEY_LORE));
+			List<String> addMoneyLore = Lists.newArrayList(i18n
+                .getString(Messages.Inventory.ADD_MONEY_LORE)
+                .split("\n"));
 
 			addMoney1ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta metaMoney1 = addMoney1ItemStack.getItemMeta();
@@ -250,18 +259,55 @@ public class DefaultTrade implements Trade {
 			addMoney3ItemStack.setItemMeta(metaMoney3);
 		}
 		
-		ItemStack addExpLevelItemStack;
-		
+		ItemStack addExp1ItemStack;
+        ItemStack addExp2ItemStack;
+        ItemStack addExp3ItemStack;
+
+        int expValue1 = config.getExpValue1();
+        int expValue2 = config.getExpValue2();
+        int expValue3 = config.getExpValue3();
+
 		if (config.usesXpTrading()) {
-			addExpLevelItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
-			ItemMeta addExpLevelMeta = addExpLevelItemStack.getItemMeta();
-			addExpLevelMeta.setDisplayName(i18n.getString(Messages.Inventory.ADD_EXP_TITLE));
-			List<String> addExpLevelLore = Lists.newArrayList();
-			addExpLevelLore.add(i18n.getString(Messages.Inventory.ADD_EXP_LORE));
+			addExp1ItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+            addExp2ItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+            addExp3ItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+
+			ItemMeta addExpLevelMeta = addExp1ItemStack.getItemMeta();
+			addExpLevelMeta.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_EXP_TITLE)
+                .setVariable("exp", String.valueOf(expValue1))
+                .toString());
+			List<String> addExpLevelLore = Lists.newArrayList(i18n.getVarString(Messages.Inventory.ADD_EXP_LORE)
+                    .setVariable("exp", String.valueOf(expValue1))
+                    .toString()
+                    .split("\n"));
 			addExpLevelMeta.setLore(addExpLevelLore);
-			addExpLevelItemStack.setItemMeta(addExpLevelMeta);
+			addExp1ItemStack.setItemMeta(addExpLevelMeta);
+
+            addExpLevelMeta = addExp2ItemStack.getItemMeta();
+            addExpLevelMeta.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_EXP_TITLE)
+                    .setVariable("exp", String.valueOf(expValue2))
+                    .toString());
+            addExpLevelLore = Lists.newArrayList(i18n.getVarString(Messages.Inventory.ADD_EXP_LORE)
+                    .setVariable("exp", String.valueOf(expValue2))
+                    .toString()
+                    .split("\n"));
+            addExpLevelMeta.setLore(addExpLevelLore);
+            addExp2ItemStack.setItemMeta(addExpLevelMeta);
+
+            addExpLevelMeta = addExp3ItemStack.getItemMeta();
+            addExpLevelMeta.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_EXP_TITLE)
+                    .setVariable("exp", String.valueOf(expValue3))
+                    .toString());
+            addExpLevelLore = Lists.newArrayList(i18n.getVarString(Messages.Inventory.ADD_EXP_LORE)
+                    .setVariable("exp", String.valueOf(expValue3))
+                    .toString()
+                    .split("\n"));
+            addExpLevelMeta.setLore(addExpLevelLore);
+            addExp3ItemStack.setItemMeta(addExpLevelMeta);
 		} else {
-			addExpLevelItemStack = seperator;
+			addExp1ItemStack = seperator;
+            addExp2ItemStack = seperator;
+            addExp3ItemStack = seperator;
 		}
 		
 		inv.setItem(EXP_INFO_INDEX, expInfoItemStack);
@@ -272,7 +318,9 @@ public class DefaultTrade implements Trade {
 		inv.setItem(ADD_MONEY_1_INDEX, usesVault ? addMoney1ItemStack : seperator);
 		inv.setItem(ADD_MONEY_2_INDEX, usesVault ? addMoney2ItemStack : seperator);
 		inv.setItem(ADD_MONEY_3_INDEX, usesVault ? addMoney3ItemStack : seperator);
-		inv.setItem(ADD_EXP_LEVEL_INDEX, addExpLevelItemStack);
+		inv.setItem(ADD_EXP_1_INDEX, addExp1ItemStack);
+        inv.setItem(ADD_EXP_2_INDEX, addExp2ItemStack);
+        inv.setItem(ADD_EXP_3_INDEX, addExp3ItemStack);
 	}
 	
 	@Override
@@ -397,6 +445,7 @@ public class DefaultTrade implements Trade {
 		TradeAction action = TradeAction.NOTHING;
 		
 		int moneyAdding = 0;
+        int expAdding = 0;
 		
 		if (isPlayerInventory) {
 			action = TradeAction.MOVE_ITEM_TO_TRADE_INVENTORY;
@@ -405,6 +454,10 @@ public class DefaultTrade implements Trade {
             int moneyValue2 = config.getMoneyValue2();
             int moneyValue3 = config.getMoneyValue3();
 
+            int expValue1 = config.getExpValue1();
+            int expValue2 = config.getExpValue2();
+            int expValue3 = config.getExpValue3();
+
 			if (slot == ADD_MONEY_1_INDEX) {
 				moneyAdding = moneyValue1;
 				action = TradeAction.ADD_MONEY;
@@ -412,10 +465,17 @@ public class DefaultTrade implements Trade {
 				moneyAdding = moneyValue2;
 				action = TradeAction.ADD_MONEY;
 			} else if (slot == ADD_MONEY_3_INDEX) {
-				moneyAdding = moneyValue3;
-				action = TradeAction.ADD_MONEY;
-			} else if (slot == ADD_EXP_LEVEL_INDEX && config.usesXpTrading()) {
-				action = TradeAction.ADD_EXP;
+                moneyAdding = moneyValue3;
+                action = TradeAction.ADD_MONEY;
+            } else if (slot == ADD_EXP_1_INDEX && config.usesXpTrading()) {
+                expAdding = expValue1;
+                action = TradeAction.ADD_EXP;
+            } else if (slot == ADD_EXP_2_INDEX && config.usesXpTrading()) {
+                expAdding = expValue2;
+                action = TradeAction.ADD_EXP;
+            } else if (slot == ADD_EXP_3_INDEX && config.usesXpTrading()) {
+                expAdding = expValue3;
+                action = TradeAction.ADD_EXP;
 			} else if (slot == ACCEPT_TRADE_INDEX) {
 				action = TradeAction.ACCEPT;
 			} else if (slot == DECLINE_TRADE_INDEX) {
@@ -445,9 +505,9 @@ public class DefaultTrade implements Trade {
 			int newExpOffer = tradePlayer.getExpOffer();
 
 			if (clickType == ClickType.LEFT) {
-				newExpOffer++;
+				newExpOffer += expAdding;
 				
-				if (newExpOffer > player.getLevel()) {
+				if (newExpOffer > SetExpFix.getTotalExperience(player.getPlayer())) {
 					// Too few exp
 					player.sendMessage(i18n.getString(Messages.General.NOT_ENOUGH_XP));
 					return;
@@ -457,7 +517,7 @@ public class DefaultTrade implements Trade {
                     player.playSound(player.getLocation(), clickSound, 1.0F, ADD_PITCH);
                 }
 			} else if (clickType == ClickType.RIGHT) {
-				newExpOffer--;
+				newExpOffer -= expAdding;
 				
 				if (newExpOffer < 0) {
 					player.sendMessage(i18n.getString(Messages.General.NO_XP_OFFER));
@@ -468,7 +528,7 @@ public class DefaultTrade implements Trade {
                     player.playSound(player.getLocation(), clickSound, 1.0F, REMOVE_PITCH);
                 }
 			}
-			
+
 			tradePlayer.setExpOffer(newExpOffer);
 			declineAll();
 			break;
@@ -601,13 +661,13 @@ public class DefaultTrade implements Trade {
 		}
 		
 		if (initiator.getExpOffer() > 0) {
-			partnerPlayer.setLevel(partnerPlayer.getLevel() + initiator.getExpOffer());
-			initiatorPlayer.setLevel(initiatorPlayer.getLevel() - initiator.getExpOffer());
+            SetExpFix.setTotalExperience(partnerPlayer, SetExpFix.getTotalExperience(partnerPlayer) + initiator.getExpOffer());
+            SetExpFix.setTotalExperience(initiatorPlayer, SetExpFix.getTotalExperience(initiatorPlayer) - initiator.getExpOffer());
 		}
 		
 		if (partner.getExpOffer() > 0) {
-			initiatorPlayer.setLevel(initiatorPlayer.getLevel() + partner.getExpOffer());
-			partnerPlayer.setLevel(partnerPlayer.getLevel() - partner.getExpOffer());
+            SetExpFix.setTotalExperience(partnerPlayer, SetExpFix.getTotalExperience(partnerPlayer) - partner.getExpOffer());
+            SetExpFix.setTotalExperience(initiatorPlayer, SetExpFix.getTotalExperience(initiatorPlayer) + partner.getExpOffer());
 		}
 		
 		setState(TradeState.CONTRACTED);
@@ -720,7 +780,7 @@ public class DefaultTrade implements Trade {
 		String loreLine;
 		boolean isConfirmed;
 		boolean usesVault = plugin.usesVault();
-		
+
 		if (initiator.hasAccepted() || partner.hasAccepted()) {
 			statusStack = CONFIRMED_STATUS_MATERIAL_DATA.toItemStack(1);
 			loreLine = i18n.getString(Messages.Inventory.ONE_PLAYER_ACCEPTED);
@@ -730,29 +790,55 @@ public class DefaultTrade implements Trade {
 			loreLine = i18n.getString(Messages.Inventory.WAITING_FOR_OTHER_PLAYER_LORE);
 			isConfirmed = false;
 		}
-		
+
 		ItemMeta meta = statusStack.getItemMeta();
 		meta.setDisplayName(i18n.getVarString(Messages.Inventory.TRADE_STATUS_TITLE)
                 .setVariable("state-color", String.valueOf(isConfirmed ? ChatColor.GREEN : ChatColor.RED))
                 .toString());
 		meta.setLore(Lists.newArrayList(ChatColor.WHITE + loreLine));
 		statusStack.setItemMeta(meta);
-		
-		ItemStack expInfo = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
-		ItemMeta expInfoMeta = expInfo.getItemMeta();
-		expInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.EXP_INFO_TITLE));
+
+        int initiatorDiff = getLevelDiff(initiator.getPlayer().getLevel(), SetExpFix.getTotalExperience(initiator.getPlayer()),
+                partner.getExpOffer() - initiator.getExpOffer());
+        int partnerDiff = getLevelDiff(partner.getPlayer().getLevel(), SetExpFix.getTotalExperience(partner.getPlayer()),
+                initiator.getExpOffer() - partner.getExpOffer());
+
+		ItemStack expInfoInitiator = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+        ItemStack expInfoPartner = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+
+		ItemMeta expInfoMetaInitiator = expInfoInitiator.getItemMeta();
+        ItemMeta expInfoMetaPartner = expInfoPartner.getItemMeta();
+
+        expInfoMetaInitiator.setDisplayName(i18n.getString(Messages.Inventory.EXP_INFO_TITLE));
+        expInfoMetaPartner.setDisplayName(i18n.getString(Messages.Inventory.EXP_INFO_TITLE));
+
 		List<String> expInfoLore = Lists.newArrayList();
 		expInfoLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
                 .setVariable("player", initiator.getName())
-                .setVariable("offer", String.valueOf(initiator.getExpOffer()))
+                .setVariable("offer", String.valueOf(initiator.getExpOffer()) + " XP")
                 .toString());
 		expInfoLore.add(i18n.getVarString(Messages.Inventory.OFFER_LORE)
                 .setVariable("player", partner.getName())
-                .setVariable("offer", String.valueOf(partner.getExpOffer()))
+                .setVariable("offer", String.valueOf(partner.getExpOffer()) + " XP")
                 .toString());
-		expInfoMeta.setLore(expInfoLore);
-		expInfo.setItemMeta(expInfoMeta);
-		
+        expInfoLore.add("");
+
+        List<String> expInfoLoreInitiator = Lists.newArrayList(expInfoLore);
+        List<String> expInfoLorePartner = Lists.newArrayList(expInfoLore);
+
+        expInfoLoreInitiator.add(i18n.getVarString(Messages.Inventory.LEVEL_INFO)
+            .setVariable("level-diff", LEVEL_FORMAT.format(initiatorDiff))
+            .toString());
+        expInfoLorePartner.add(i18n.getVarString(Messages.Inventory.LEVEL_INFO)
+            .setVariable("level-diff", LEVEL_FORMAT.format(partnerDiff))
+            .toString());
+
+		expInfoMetaInitiator.setLore(expInfoLoreInitiator);
+        expInfoMetaPartner.setLore(expInfoLorePartner);
+
+		expInfoInitiator.setItemMeta(expInfoMetaInitiator);
+        expInfoPartner.setItemMeta(expInfoMetaPartner);
+
 		if (usesVault) {
 			ItemStack moneyInfo = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta moneyInfoMeta = moneyInfo.getItemMeta();
@@ -768,19 +854,43 @@ public class DefaultTrade implements Trade {
                     .toString());
 			moneyInfoMeta.setLore(moneyInfoLore);
 			moneyInfo.setItemMeta(moneyInfoMeta);
-			
+
 			initiator.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
 			partner.getInventory().setItem(MONEY_INFO_INDEX, moneyInfo);
 		}
-		
+
 		initiator.getInventory().setItem(CONFIRMATION_INFO_INDEX, statusStack);
 		partner.getInventory().setItem(CONFIRMATION_INFO_INDEX, statusStack);
-		
+
 		if (config.usesXpTrading()) {
-			initiator.getInventory().setItem(EXP_INFO_INDEX, expInfo);
-			partner.getInventory().setItem(EXP_INFO_INDEX, expInfo);
+			initiator.getInventory().setItem(EXP_INFO_INDEX, expInfoInitiator);
+			partner.getInventory().setItem(EXP_INFO_INDEX, expInfoPartner);
 		}
 	}
+
+    private int getLevelDiff(int levelBase, int expBase, int expDiff) {
+        int totalExp = expBase + expDiff;
+        int level;
+
+        if (expDiff == 0) {
+            return 0;
+        }
+
+        //Some magic number stuff, based on solving the equations found at
+        //http://minecraft.gamepedia.com/Experience for the level
+        if (totalExp < 394) {
+            //Level 0 - 16
+            level = (int) (Math.sqrt(totalExp + 9) - 3);
+        } else if (totalExp >= 394 && totalExp < 1628) {
+            //Level 17 - 31
+            level = (int) (0.632456 * (Math.sqrt(totalExp - 195.975) + 12.8072));
+        } else {
+            //Level 32+
+            level = (int) (0.471405 * (Math.sqrt(totalExp - 752.986) + 38.3016));
+        }
+
+        return level - levelBase;
+    }
 
     public static Sound getSoundEnumType(String... searchStrings) {
         Sound[] sounds = Sound.values();

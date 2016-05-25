@@ -7,8 +7,8 @@ general:
   cancel-trade-player-left: '&4Your trade partner has left the game'
   cancel-trade-timeout: '&6Trade request timed out'
   cancel-server-shutdown: '&cCancelling trade as plugin is shutting down'
-  not-enough-xp: '&cYou do not have enough xp to do this!'
-  no-xp-offer: '&cYou do not provide an exp offer!'
+  not-enough-xp: '&cYou do not have enough XP to do this!'
+  no-xp-offer: '&cYou do not provide an XP offer!'
   not-enough-money: '&cYou do not have sufficient funds to do this!'
   no-negative-money-offer: '&cYour money offer cannot be negative!'
   cannot-trade-item: '&cYou cannot trade this item!'
@@ -34,9 +34,10 @@ inventory:
   waiting-for-other-player-lore: '&fWaiting for other player to accept'
   offer-lore: '&8$[player] offers: &7&l$[offer]'
   add-money-lore: '&7Left-Click to add money\n&7Right-Click to remove money'
-  add-exp-lore: '&7Left-Click to add a level\n&7Right-Click to remove a level'
-  add-exp-title: 'Add/Remove one exp level'
+  add-exp-lore: '&7Left-Click to add $[exp] XP\n&7Right-Click to remove a $[exp] XP'
+  add-exp-title: 'Add/Remove $[exp] XP'
   add-remove-money-lore: '&fAdd/Remove $[money]'
+  level-info: "&6&l$[level-diff] level"
 
 command:
   only-player: '&cOnly players may execute this command!'

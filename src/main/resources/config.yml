@@ -21,6 +21,12 @@ inventory:
   money-value-1: 50
   money-value-2: 100
   money-value-3: 500
+
+  # Same thing with exp. Define the exp amount of each
+  # button in the trading inventory
+  exp-value-1: 5
+  exp-value-2: 50
+  exp-value-3: 100
 localization:
   # The language this plugin is using. Currently
   # an english and german translation is available

@@ -45,6 +45,9 @@ public class TradeConfiguration {
     private int moneyValue1;
     private int moneyValue2;
     private int moneyValue3;
+    private int expValue1;
+    private int expValue2;
+    private int expValue3;
 	private int maximumTradeDistance;
 	private boolean allowCreativeTrading;
 	private int timeout;
@@ -72,6 +75,9 @@ public class TradeConfiguration {
         moneyValue1 = inventorySection.getInt("money-value-1", 50);
         moneyValue2 = inventorySection.getInt("money-value-2", 100);
         moneyValue3 = inventorySection.getInt("money-value-3", 500);
+        expValue1 = inventorySection.getInt("exp-value-1", 5);
+        expValue2 = inventorySection.getInt("exp-value-1", 50);
+        expValue3 = inventorySection.getInt("exp-value-1", 100);
 
 		ConfigurationSection globalSection = config.getConfigurationSection("global");
 		maximumTradeDistance = globalSection.getInt("max-distance", 15);
@@ -141,6 +147,18 @@ public class TradeConfiguration {
 
     public int getMoneyValue3() {
         return moneyValue3;
+    }
+
+    public int getExpValue1() {
+        return expValue1;
+    }
+
+    public int getExpValue2() {
+        return expValue2;
+    }
+
+    public int getExpValue3() {
+        return expValue3;
     }
 
     public int getMaximumTradeDistance() {
