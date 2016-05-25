@@ -64,7 +64,7 @@ public class TradeConfiguration {
 		ConfigurationSection blockSection = config.getConfigurationSection("blocks");
 		acceptBlockData = ItemStackData.fromConfigString(blockSection.getString("accept", "ink_sack:10"), BLOCKDATA_SEPERATOR);
 		declineBlockData = ItemStackData.fromConfigString(blockSection.getString("decline", "ink_sack:1"), BLOCKDATA_SEPERATOR);
-		seperatorBlockData = ItemStackData.fromConfigString(blockSection.getString("seperator", "iron_fence"), BLOCKDATA_SEPERATOR);
+		seperatorBlockData = ItemStackData.fromConfigString(blockSection.getString("seperator", "barrier"), BLOCKDATA_SEPERATOR);
 
         ConfigurationSection localizationSection = config.getConfigurationSection("localization");
         String localeString = localizationSection.getString("locale");
