@@ -52,7 +52,6 @@ public class SimpleTrading extends JavaPlugin {
     private static final String I18N_CLASSPATH_FOLDER = "i18n/";
 	private static final String VAULT_PLUGIN_NAME = "Vault";
 	
-	private File messageConfigFile;
 	private TradeConfiguration config;
 	private I18NManager i18nManager;
 	private TradeFactory factory;
@@ -64,7 +63,6 @@ public class SimpleTrading extends JavaPlugin {
 
 	public void onEnable() {
 		File configFile = new File(this.getDataFolder(), "config.yml");
-		messageConfigFile = new File(this.getDataFolder(), "messages.yml");
 
         if (!configFile.exists()) {
             saveDefaultConfig();
@@ -73,10 +71,6 @@ public class SimpleTrading extends JavaPlugin {
         Path dataFolder = getDataFolder().toPath();
         Configuration checkConfig = YamlConfiguration.loadConfiguration(configFile);
         checkConfigVersions(checkConfig, dataFolder);
-		
-		if (!messageConfigFile.exists()) {
-			saveResource("messages.yml", false);
-		}
 
         File i18nFolder = new File(getDataFolder(), "i18n");
         i18nFolder.mkdirs();
@@ -165,8 +159,6 @@ public class SimpleTrading extends JavaPlugin {
 	public void reload() {
 		reloadConfig();
 		config.loadByConfiguration(getConfig());
-		
-		Configuration messageConfiguration = YamlConfiguration.loadConfiguration(messageConfigFile);
         i18nManager.reloadAll(config.getLocale());
 
 		controlManager.updateValues(config);
