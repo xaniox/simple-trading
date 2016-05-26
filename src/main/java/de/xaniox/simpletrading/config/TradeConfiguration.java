@@ -17,16 +17,15 @@
  */
 package de.xaniox.simpletrading.config;
 
-import java.util.List;
-import java.util.Locale;
-
+import com.google.common.collect.Lists;
 import de.xaniox.simpletrading.ItemControlManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.Locale;
 
 public class TradeConfiguration { 
 	
@@ -71,13 +70,13 @@ public class TradeConfiguration {
         locale = parseLocale(localeString);
 
 		ConfigurationSection inventorySection = config.getConfigurationSection("inventory");
-		inventoryName = inventorySection.getString("name", "SimpleTrading - @");
+		inventoryName = inventorySection.getString("name", "SimpleTrading - @p");
         moneyValue1 = inventorySection.getInt("money-value-1", 50);
         moneyValue2 = inventorySection.getInt("money-value-2", 100);
         moneyValue3 = inventorySection.getInt("money-value-3", 500);
         expValue1 = inventorySection.getInt("exp-value-1", 5);
-        expValue2 = inventorySection.getInt("exp-value-1", 50);
-        expValue3 = inventorySection.getInt("exp-value-1", 100);
+        expValue2 = inventorySection.getInt("exp-value-2", 50);
+        expValue3 = inventorySection.getInt("exp-value-3", 100);
 
 		ConfigurationSection globalSection = config.getConfigurationSection("global");
 		maximumTradeDistance = globalSection.getInt("max-distance", 15);
