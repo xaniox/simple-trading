@@ -793,7 +793,7 @@ public class DefaultTrade implements Trade {
 
 		ItemMeta meta = statusStack.getItemMeta();
 		meta.setDisplayName(i18n.getVarString(Messages.Inventory.TRADE_STATUS_TITLE)
-                .setVariable("state-color", String.valueOf(isConfirmed ? ChatColor.GREEN : ChatColor.RED))
+                .setVariable("color", String.valueOf(isConfirmed ? ChatColor.GREEN : ChatColor.RED))
                 .toString());
 		meta.setLore(Lists.newArrayList(ChatColor.WHITE + loreLine));
 		statusStack.setItemMeta(meta);
