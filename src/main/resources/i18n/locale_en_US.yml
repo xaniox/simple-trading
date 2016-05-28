@@ -23,6 +23,7 @@ general:
   trade-confirmed: '&6$[player] confirmed your trade'
   trade-request-declined: '&6You''re partner has declined your trade request.'
   trade-declined: '&6You declined the trade request of $[player]'
+  max-trade-amount-reached: '&cYou have reached the money limit that can be traded at once'
 
 inventory:
   exp-info-title: '&2Experience Trade'

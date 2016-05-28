@@ -52,6 +52,11 @@ global:
   timeout: 60
   # Specifies wether to use xp trading or not
   use-xp-trading: true
+  # Specifies wether to use money trading or not
+  use-money-trading: true
+  # Defines the maximum amount of money that can be traded at once
+  # Set to -1 to disable this feature
+  max-money-trading: -1
 item-control:
   # The control mode the plugin is running
   # Available modes: blacklist, whitelist
@@ -73,4 +78,4 @@ item-control:
   item-lore:
   - '[Untradeable]'
 
-config-version: 1
+config-version: 2

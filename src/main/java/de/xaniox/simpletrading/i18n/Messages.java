@@ -47,6 +47,7 @@ public interface Messages {
         public static final String TRADE_CONFIRMED = PREFIX + "trade-confirmed";
         public static final String TRADE_REQUEST_DECLINED = PREFIX + "trade-request-declined";
         public static final String TRADE_DECLINED = PREFIX + "trade-declined";
+        public static final String MAX_TRADE_AMOUNT_REACHED = PREFIX + "max-trade-amount-reached";
 
     }
 

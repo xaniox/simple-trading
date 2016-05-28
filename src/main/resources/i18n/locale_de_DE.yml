@@ -23,6 +23,7 @@ general:
   trade-confirmed: '&6$[player] hat deinen Handel bestätigt'
   trade-request-declined: '&6Dein Handelspartner hat deine Anfrage abgelehnt.'
   trade-declined: '&6Du hast die Handelsanfrage von $[player] abgelehnt.'
+  max-trade-amount-reached: '&cDu hast den maximalen Geldwert erreicht, der gehandelt werden kann!'
 
 inventory:
   exp-info-title: '&2XP-Handel'

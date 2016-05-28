@@ -57,11 +57,11 @@ public class DefaultTrade implements Trade {
 	private static final MaterialData UNCONFIRMED_STATUS_MATERIAL_DATA = new MaterialData(Material.STAINED_GLASS, (byte) 14);
 	private static final MaterialData CONFIRMED_STATUS_MATERIAL_DATA = new MaterialData(Material.STAINED_GLASS, (byte) 5);
 	
-	private static final int EXP_INFO_INDEX = 2;
+	private static final int EXP_INFO_INDEX = 6;
 	private static final int ACCEPT_TRADE_INDEX = 3;
 	private static final int CONFIRMATION_INFO_INDEX = 4;
 	private static final int DECLINE_TRADE_INDEX = 5;
-	private static final int MONEY_INFO_INDEX = 6;
+	private static final int MONEY_INFO_INDEX = 2;
 	private static final int ADD_MONEY_1_INDEX = 10;
 	private static final int ADD_MONEY_2_INDEX = 11;
 	private static final int ADD_MONEY_3_INDEX = 12;
@@ -204,17 +204,19 @@ public class DefaultTrade implements Trade {
 		declineMeta.setDisplayName(i18n.getString(Messages.Inventory.DECLINE_TRADE_TITLE));
 		declineItemStack.setItemMeta(declineMeta);
 		
-		ItemStack moneyInfoItemStack = null;
-		ItemStack addMoney1ItemStack = null;
-		ItemStack addMoney2ItemStack = null;
-		ItemStack addMoney3ItemStack = null;
+		ItemStack moneyInfoItemStack = seperator;
+		ItemStack addMoney1ItemStack = seperator;
+		ItemStack addMoney2ItemStack = seperator;
+		ItemStack addMoney3ItemStack = seperator;
 
         int money1Value = config.getMoneyValue1();
         int money2Value = config.getMoneyValue2();
         int money3Value = config.getMoneyValue3();
 		
 		boolean usesVault = plugin.usesVault();
-		if (usesVault) {
+        boolean usesMoneyTrading = config.usesMoneyTrading();
+
+		if (usesVault && usesMoneyTrading) {
 			moneyInfoItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
 			ItemMeta moneyMeta = moneyInfoItemStack.getItemMeta();
 			moneyMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
@@ -314,10 +316,10 @@ public class DefaultTrade implements Trade {
 		inv.setItem(ACCEPT_TRADE_INDEX, acceptItemStack);
 		inv.setItem(CONFIRMATION_INFO_INDEX, unconfirmedStatusItemStack);
 		inv.setItem(DECLINE_TRADE_INDEX, declineItemStack);
-		inv.setItem(MONEY_INFO_INDEX, usesVault ? moneyInfoItemStack : seperator);
-		inv.setItem(ADD_MONEY_1_INDEX, usesVault ? addMoney1ItemStack : seperator);
-		inv.setItem(ADD_MONEY_2_INDEX, usesVault ? addMoney2ItemStack : seperator);
-		inv.setItem(ADD_MONEY_3_INDEX, usesVault ? addMoney3ItemStack : seperator);
+		inv.setItem(MONEY_INFO_INDEX, moneyInfoItemStack);
+		inv.setItem(ADD_MONEY_1_INDEX, addMoney1ItemStack);
+		inv.setItem(ADD_MONEY_2_INDEX, addMoney2ItemStack);
+		inv.setItem(ADD_MONEY_3_INDEX, addMoney3ItemStack);
 		inv.setItem(ADD_EXP_1_INDEX, addExp1ItemStack);
         inv.setItem(ADD_EXP_2_INDEX, addExp2ItemStack);
         inv.setItem(ADD_EXP_3_INDEX, addExp3ItemStack);
@@ -533,12 +535,14 @@ public class DefaultTrade implements Trade {
 			declineAll();
 			break;
 		case ADD_MONEY:
-			if (!usesVault) {
+			if (!usesVault || !config.usesMoneyTrading()) {
 				return;
 			}
 
 			int newMoneyOffer = tradePlayer.getMoneyOffer();
-			if (clickType == ClickType.LEFT) {
+            int maxMoneyAmount = config.getMaxMoneyTrading();
+
+            if (clickType == ClickType.LEFT) {
 				newMoneyOffer += moneyAdding;
 				
 				if (newMoneyOffer > econ.getBalance(player)) {
@@ -546,6 +550,12 @@ public class DefaultTrade implements Trade {
 					player.sendMessage(i18n.getString(Messages.General.NOT_ENOUGH_MONEY));
 					return;
 				}
+
+                if (newMoneyOffer > maxMoneyAmount) {
+                    // Reached the limit
+                    player.sendMessage(i18n.getString(Messages.General.MAX_TRADE_AMOUNT_REACHED));
+                    return;
+                }
 
                 if (clickSound != null) {
                     player.playSound(player.getLocation(), clickSound, 1.0F, ADD_PITCH);
