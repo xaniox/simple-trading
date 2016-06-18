@@ -52,3 +52,5 @@ command:
   lore-applied: '&7Die Lore wurde dem Item in deiner Hand hinzugefügt.'
   player-not-found: '&cSpieler mit dem Namen $[player] konnte nicht gefunden werden!'
   no-self-trade: '&cDu kannst nicht mit dir selbst handeln!'
+  cannot-trade-in-world: '&cDu kannst in dieser Welt nicht handeln!'
+  cannot-trade-in-world-partner: '&cDein Partner befindet sich in einer Welt, in der nicht gehandelt werden kann!'

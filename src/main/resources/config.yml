@@ -77,5 +77,13 @@ item-control:
   # control-mode setting
   item-lore:
   - '[Untradeable]'
+world-control:
+  # Same as the control mode in the item-control section
+  control-mode: blacklist
 
-config-version: 2
+  # A list of worlds in which trading is allowed or disallowed
+  # depending on your control mode setting
+  world-list:
+  - ''
+
+config-version: 3

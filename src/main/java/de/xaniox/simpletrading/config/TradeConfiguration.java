@@ -18,7 +18,6 @@
 package de.xaniox.simpletrading.config;
 
 import com.google.common.collect.Lists;
-import de.xaniox.simpletrading.ItemControlManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -32,7 +31,7 @@ public class TradeConfiguration {
 	private static final String BLOCKDATA_SEPERATOR = ":";
 	private static final String PLAYERNAME_PLACEHOLDER = "@p";
     public static final int NO_MAX_DISTANCE = -1;
-    public static final int CURRENT_CONFIG_VERSION = 2;
+    public static final int CURRENT_CONFIG_VERSION = 3;
     public static final String DESTINATION_FILE_NAME = "config.yml";
     public static final String CLASSPATH_RESOURCE_NAME = "/config.yml";
 
@@ -53,9 +52,11 @@ public class TradeConfiguration {
 	private boolean useXpTrading;
     private boolean useMoneyTrading;
     private int maxMoneyTrading;
-	private ItemControlManager.ItemControlMode controlMode;
-	private List<ItemStackData> controlItems;
-	private List<String> controlLores;
+	private ControlMode itemControlMode;
+	private List<ItemStackData> itemControlItems;
+	private List<String> itemControlLores;
+    private ControlMode worldControlMode;
+    private List<String> worldControlList;
 	
 	public TradeConfiguration(Configuration config) {
 		loadByConfiguration(config);
@@ -89,15 +90,19 @@ public class TradeConfiguration {
         maxMoneyTrading = globalSection.getInt("max-money-trading", -1);
 		
 		ConfigurationSection itemControlSection = config.getConfigurationSection("item-control");
-		controlMode = ItemControlManager.ItemControlMode.getMode(itemControlSection.getString("control-mode"), ItemControlManager.ItemControlMode.BLACKLIST);
+		itemControlMode = ControlMode.getMode(itemControlSection.getString("control-mode"), ControlMode.BLACKLIST);
 		List<String> controlItemStringList = itemControlSection.getStringList("item-list");
-		controlItems = Lists.newArrayList();
+		itemControlItems = Lists.newArrayList();
 		
 		for (String controlItemString : controlItemStringList) {
-			controlItems.add(ItemStackData.fromConfigString(controlItemString, BLOCKDATA_SEPERATOR));
+			itemControlItems.add(ItemStackData.fromConfigString(controlItemString, BLOCKDATA_SEPERATOR));
 		}
 		
-		controlLores = itemControlSection.getStringList("item-lore");
+		itemControlLores = itemControlSection.getStringList("item-lore");
+
+        ConfigurationSection worldControlSection = config.getConfigurationSection("world-control");
+        worldControlMode = ControlMode.getMode(worldControlSection.getString("control-mode"), ControlMode.BLACKLIST);
+        worldControlList = worldControlSection.getStringList("world-list");
 	}
 
     private static Locale parseLocale(String localeString) {
@@ -188,17 +193,25 @@ public class TradeConfiguration {
         return maxMoneyTrading;
     }
 
-    public ItemControlManager.ItemControlMode getItemControlMode() {
-		return controlMode;
+    public ControlMode getItemControlMode() {
+		return itemControlMode;
 	}
 	
 	public List<ItemStackData> getItemControlList() {
-		return controlItems;
+		return itemControlItems;
 	}
 	
 	public List<String> getItemControlLoreList() {
-		return controlLores;
+		return itemControlLores;
 	}
+
+    public ControlMode getWorldControlMode() {
+        return worldControlMode;
+    }
+
+    public List<String> getWorldControlList() {
+        return worldControlList;
+    }
 	
 	public static class ItemStackData {
 		

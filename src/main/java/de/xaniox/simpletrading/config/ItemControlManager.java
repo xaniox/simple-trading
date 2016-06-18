@@ -15,47 +15,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.xaniox.simpletrading;
+package de.xaniox.simpletrading.config;
 
-import java.util.List;
-
+import de.xaniox.simpletrading.config.TradeConfiguration.ItemStackData;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import de.xaniox.simpletrading.config.TradeConfiguration;
-import de.xaniox.simpletrading.config.TradeConfiguration.ItemStackData;
+import java.util.List;
 
-public class ItemControlManager {
+public class ItemControlManager extends ControlManager<ItemStack> {
 	
-	private ItemControlMode mode;
 	private List<ItemStackData> items;
 	private List<String> lores;
 	
-	public ItemControlManager(ItemControlMode mode, List<ItemStackData> items, List<String> lores) {
-		this.mode = mode;
-		this.items = items;
+	public ItemControlManager(ControlMode mode, List<ItemStackData> items, List<String> lores) {
+        super(mode);
+
+        this.items = items;
 		this.lores = lores;
 	}
 	
 	public ItemControlManager(TradeConfiguration config) {
+        super(config.getItemControlMode());
+
 		updateValues(config);
 	}
-	
+
+    @Override
 	public void updateValues(TradeConfiguration config) {
-		this.mode = config.getItemControlMode();
 		this.items = config.getItemControlList();
 		this.lores = config.getItemControlLoreList();
 	}
-
-	public boolean isTradable(ItemStack stack) {
-		boolean allowedBlacklist = isAllowedBlacklist(stack);
-		
-		return (mode == ItemControlMode.BLACKLIST) == allowedBlacklist;
-	}
 	
 	@SuppressWarnings("deprecation")
-	private boolean isAllowedBlacklist(ItemStack stack) {
+    @Override
+	protected boolean isAllowedBlacklist(ItemStack stack) {
 		for (ItemStackData data : items) {
 			if (data.getMaterial() == stack.getType() && data.getData() == stack.getData().getData()) {
 				return false;
@@ -84,27 +79,6 @@ public class ItemControlManager {
 		}
 		
 		return true;
-	}
-
-	public enum ItemControlMode {
-		
-		BLACKLIST,
-		WHITELIST;
-		
-		public static ItemControlMode getMode(String str, ItemControlMode def) {
-			str = str.toUpperCase();
-			
-			for (ItemControlMode mode : values()) {
-				if (mode.name().equals(str)) {
-					return mode;
-				}
-			}
-			
-			if (def != null) {
-				return def;
-			} else throw new IllegalArgumentException("No enum constant \"" + str + "\" defined");
-		}
-		
 	}
 	
 }

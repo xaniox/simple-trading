@@ -15,28 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.xaniox.simpletrading;
+package de.xaniox.simpletrading.config;
 
-public enum Permissions {
-		
-    TRADE_ACCEPT("trade.accept"),
-    TRADE_ACCEPT_SHIFT("trade.accept.shift"),
-    TRADE_INITIATE("trade.initiate"),
-    TRADE_INITIATE_SHIFT("trade.initiate.shift"),
-    TRADE_DENY("trade.deny"),
+public abstract class ControlManager<T> {
 
-	RELOAD("reload"), 
-	SIGN("sign");
-	
-	private static final String PREFIX = "simpletrading.";
-	private String subPermission;
-	
-	Permissions(String subPermission) {
-		this.subPermission = subPermission;
-	}
-	
-	public String getPermission() {
-		return PREFIX + subPermission;
-	}
-	
+    private ControlMode mode;
+
+    public ControlManager(ControlMode mode) {
+        this.mode = mode;
+    }
+
+    public ControlMode getMode() {
+        return mode;
+    }
+
+    protected void setMode(ControlMode mode) {
+        this.mode = mode;
+    }
+
+    public boolean isAllowed(T item) {
+        return (mode == ControlMode.BLACKLIST) == isAllowedBlacklist(item);
+    }
+
+    protected abstract boolean isAllowedBlacklist(T item);
+
+    public abstract void updateValues(TradeConfiguration config);
+
 }

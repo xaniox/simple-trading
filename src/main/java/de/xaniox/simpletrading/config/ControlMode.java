@@ -15,28 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.xaniox.simpletrading;
+package de.xaniox.simpletrading.config;
 
-public enum Permissions {
-		
-    TRADE_ACCEPT("trade.accept"),
-    TRADE_ACCEPT_SHIFT("trade.accept.shift"),
-    TRADE_INITIATE("trade.initiate"),
-    TRADE_INITIATE_SHIFT("trade.initiate.shift"),
-    TRADE_DENY("trade.deny"),
+public enum ControlMode {
 
-	RELOAD("reload"), 
-	SIGN("sign");
-	
-	private static final String PREFIX = "simpletrading.";
-	private String subPermission;
-	
-	Permissions(String subPermission) {
-		this.subPermission = subPermission;
-	}
-	
-	public String getPermission() {
-		return PREFIX + subPermission;
-	}
-	
+    BLACKLIST,
+    WHITELIST;
+
+    public static ControlMode getMode(String str, ControlMode def) {
+        str = str.toUpperCase();
+
+        for (ControlMode mode : values()) {
+            if (mode.name().equals(str)) {
+                return mode;
+            }
+        }
+
+        if (def != null) {
+            return def;
+        } else throw new IllegalArgumentException("No enum constant \"" + str + "\" defined");
+    }
+
 }

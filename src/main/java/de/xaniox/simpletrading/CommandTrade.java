@@ -19,6 +19,7 @@ package de.xaniox.simpletrading;
 
 import com.google.common.collect.Lists;
 import de.xaniox.simpletrading.config.TradeConfiguration;
+import de.xaniox.simpletrading.config.WorldControlManager;
 import de.xaniox.simpletrading.i18n.I18N;
 import de.xaniox.simpletrading.i18n.I18NManager;
 import de.xaniox.simpletrading.i18n.Messages;
@@ -58,6 +59,7 @@ public class CommandTrade implements CommandExecutor {
 		
 		Player player = (Player) sender;
 		TradeFactory factory = main.getFactory();
+        WorldControlManager worldControlManager = main.getWorldControlManager();
 
 		if (args.length < 1) {
             player.sendMessage(i18n.getVarString(Messages.Command.USAGE)
@@ -67,7 +69,7 @@ public class CommandTrade implements CommandExecutor {
 		}
 		
 		if (args[0].equalsIgnoreCase("accept")) {
-			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
+			if (!player.hasPermission(Permissions.TRADE_ACCEPT.getPermission())) {
                 player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
 				return true;
 			}
@@ -88,9 +90,24 @@ public class CommandTrade implements CommandExecutor {
                 player.sendMessage(i18n.getString(Messages.Command.PARTNER_TOO_FAR_AWAY));
 				return true;
 			}
+
+            if (!worldControlManager.isAllowed(player.getWorld())) {
+                player.sendMessage(i18n.getString(Messages.Command.CANNOT_TRADE_IN_WORLD));
+                return true;
+            }
+
+            if (!worldControlManager.isAllowed(other.getWorld())) {
+                player.sendMessage(i18n.getString(Messages.Command.CANNOT_TRADE_IN_WORLD_PARTNER));
+                return true;
+            }
 			
 			factory.acceptTrade(player);
 		} else if (args[0].equalsIgnoreCase("decline")) {
+            if (!player.hasPermission(Permissions.TRADE_DENY.getPermission())) {
+                player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
+                return true;
+            }
+
 			Trade trade = factory.getTrade(player);
 			if (trade == null || trade.getPartner().getPlayer() != player) {
 				player.sendMessage(i18n.getVarString(Messages.General.NO_PENDING_REQUESTS)
@@ -167,7 +184,7 @@ public class CommandTrade implements CommandExecutor {
             player.sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD + "SimpleTrading " + ChatColor.GREEN + "v" + desc.getVersion()
                     + ChatColor.GRAY + " by " + ChatColor.GREEN + "Matze" + ChatColor.GRAY + " (@xaniox/@matzefratze123)");
 		} else {
-			if (!player.hasPermission(Permissions.TRADE.getPermission())) {
+			if (!player.hasPermission(Permissions.TRADE_INITIATE.getPermission())) {
                 player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
                 return true;
 			}
@@ -199,6 +216,16 @@ public class CommandTrade implements CommandExecutor {
                 player.sendMessage(i18n.getString(Messages.Command.PARTNER_TOO_FAR_AWAY));
 				return true;
 			}
+
+            if (!worldControlManager.isAllowed(player.getWorld())) {
+                player.sendMessage(i18n.getString(Messages.Command.CANNOT_TRADE_IN_WORLD));
+                return true;
+            }
+
+            if (!worldControlManager.isAllowed(tradePartner.getWorld())) {
+                player.sendMessage(i18n.getString(Messages.Command.CANNOT_TRADE_IN_WORLD_PARTNER));
+                return true;
+            }
 			
 			factory.initiateTrade(player, tradePartner);
 		}

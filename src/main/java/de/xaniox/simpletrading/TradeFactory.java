@@ -19,7 +19,9 @@ package de.xaniox.simpletrading;
 
 import com.google.common.collect.Sets;
 import de.xaniox.simpletrading.Trade.StopCause;
+import de.xaniox.simpletrading.config.ItemControlManager;
 import de.xaniox.simpletrading.config.TradeConfiguration;
+import de.xaniox.simpletrading.config.WorldControlManager;
 import de.xaniox.simpletrading.i18n.I18N;
 import de.xaniox.simpletrading.i18n.I18NManager;
 import de.xaniox.simpletrading.i18n.Messages;
@@ -221,8 +223,14 @@ public class TradeFactory implements Listener {
                 .toString());
 			return;
 		}
+
+        WorldControlManager worldControlManager = plugin.getWorldControlManager();
+        if (!worldControlManager.isAllowed(player.getWorld())) {
+            player.sendMessage(i18n.getString(Messages.Command.CANNOT_TRADE_IN_WORLD));
+            return;
+        }
 		
-		if (!player.hasPermission(Permissions.TRADE.getPermission())) {
+		if (!player.hasPermission(Permissions.TRADE_INITIATE_SHIFT.getPermission())) {
 			player.sendMessage(ChatColor.RED + "You don't have permission to trade!");
 			return;
 		}

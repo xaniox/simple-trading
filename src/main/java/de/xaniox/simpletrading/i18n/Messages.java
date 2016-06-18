@@ -86,6 +86,8 @@ public interface Messages {
         public static final String LORE_APPLIED = PREFIX + "lore-applied";
         public static final String PLAYER_NOT_FOUND = PREFIX + "player-not-found";
         public static final String NO_SELF_TRADE = PREFIX + "no-self-trade";
+        public static final String CANNOT_TRADE_IN_WORLD = PREFIX + "cannot-trade-in-world";
+        public static final String CANNOT_TRADE_IN_WORLD_PARTNER = PREFIX + "cannot-trade-in-world-partner";
 
     }
 	

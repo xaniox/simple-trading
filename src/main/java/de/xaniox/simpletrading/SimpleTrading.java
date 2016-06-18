@@ -18,7 +18,9 @@
 package de.xaniox.simpletrading;
 
 import de.xaniox.simpletrading.Trade.StopCause;
+import de.xaniox.simpletrading.config.ItemControlManager;
 import de.xaniox.simpletrading.config.TradeConfiguration;
+import de.xaniox.simpletrading.config.WorldControlManager;
 import de.xaniox.simpletrading.i18n.I18N;
 import de.xaniox.simpletrading.i18n.I18NBuilder;
 import de.xaniox.simpletrading.i18n.I18NManager;
@@ -56,7 +58,8 @@ public class SimpleTrading extends JavaPlugin {
 	private I18NManager i18nManager;
 	private TradeFactory factory;
 	private BukkitTask movementTask;
-	private ItemControlManager controlManager;
+	private ItemControlManager itemControlManager;
+    private WorldControlManager worldControlManager;
 	
 	private boolean usingVault;
 	private Economy econ;
@@ -86,9 +89,10 @@ public class SimpleTrading extends JavaPlugin {
 		
 		initVaultHook();
 		
-		controlManager = new ItemControlManager(config);
+		itemControlManager = new ItemControlManager(config);
+        worldControlManager = new WorldControlManager(config);
 		
-		factory = new TradeFactory(this, config, econ, controlManager);
+		factory = new TradeFactory(this, config, econ, itemControlManager);
 		
 		getCommand("trade").setExecutor(new CommandTrade(this));
 		movementTask = getServer().getScheduler().runTaskTimer(this, new MoveCheckerRunnable(factory, config), 20L, 30L);
@@ -161,7 +165,8 @@ public class SimpleTrading extends JavaPlugin {
 		config.loadByConfiguration(getConfig());
         i18nManager.reloadAll(config.getLocale());
 
-		controlManager.updateValues(config);
+		itemControlManager.updateValues(config);
+        worldControlManager.updateValues(config);
 	}
 
     public static void copyResource(URL resourceUrl, File destination) throws IOException {
@@ -201,4 +206,7 @@ public class SimpleTrading extends JavaPlugin {
 		return config;
 	}
 
+    public WorldControlManager getWorldControlManager() {
+        return worldControlManager;
+    }
 }

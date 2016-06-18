@@ -18,6 +18,7 @@
 package de.xaniox.simpletrading;
 
 import com.google.common.collect.Lists;
+import de.xaniox.simpletrading.config.ItemControlManager;
 import de.xaniox.simpletrading.config.TradeConfiguration;
 import de.xaniox.simpletrading.i18n.I18N;
 import de.xaniox.simpletrading.i18n.I18NManager;
@@ -583,7 +584,7 @@ public class DefaultTrade implements Trade {
 		if (action == TradeAction.MOVE_ITEM_TO_PLAYER_INVENTORY || action == TradeAction.MOVE_ITEM_TO_TRADE_INVENTORY) {
 			ItemStack stack = event.getCurrentItem();
 			
-			if (!controlManager.isTradable(stack)) {
+			if (!controlManager.isAllowed(stack)) {
 				// This item is not tradeable
 				player.sendMessage(i18n.getString(Messages.General.CANNOT_TRADE_ITEM));
 				return;
