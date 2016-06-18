@@ -68,7 +68,7 @@ public class CommandTrade implements CommandExecutor {
 			return true;
 		}
 		
-		if (args[0].equalsIgnoreCase("accept")) {
+		if (args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("a")) {
 			if (!player.hasPermission(Permissions.TRADE_ACCEPT.getPermission())) {
                 player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
 				return true;
@@ -102,7 +102,7 @@ public class CommandTrade implements CommandExecutor {
             }
 			
 			factory.acceptTrade(player);
-		} else if (args[0].equalsIgnoreCase("decline")) {
+		} else if (args[0].equalsIgnoreCase("decline") || args[0].equalsIgnoreCase("d")) {
             if (!player.hasPermission(Permissions.TRADE_DENY.getPermission())) {
                 player.sendMessage(i18n.getString(Messages.Command.INSUFFICIENT_PERMISSION));
                 return true;
