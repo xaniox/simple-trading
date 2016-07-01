@@ -53,8 +53,6 @@ public class DefaultTrade implements Trade {
     private static final String[] LEVEL_UP_SEARCH = {"LEVEL_UP", "PLAYER_LEVELUP"};
     private static final String[] CLICK_SEARCH = {"UI_BUTTON_CLICK", "CLICK"};
 	
-	private static final MaterialData EXPERIENCE_MATERIAL_DATA = new MaterialData(Material.EXP_BOTTLE);
-	private static final MaterialData MONEY_MATERIAL_DATA = new MaterialData(Material.GOLD_NUGGET);
 	private static final MaterialData UNCONFIRMED_STATUS_MATERIAL_DATA = new MaterialData(Material.STAINED_GLASS, (byte) 14);
 	private static final MaterialData CONFIRMED_STATUS_MATERIAL_DATA = new MaterialData(Material.STAINED_GLASS, (byte) 5);
 	
@@ -171,7 +169,7 @@ public class DefaultTrade implements Trade {
 		ItemStack expInfoItemStack;
 		
 		if (config.usesXpTrading()) {
-			expInfoItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+			expInfoItemStack = config.getXpBlockData().newItemStack();
 			ItemMeta expInfoMeta = expInfoItemStack.getItemMeta();
 			expInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.EXP_INFO_TITLE));
 			List<String> expLore = Lists.newArrayList();
@@ -218,7 +216,7 @@ public class DefaultTrade implements Trade {
         boolean usesMoneyTrading = config.usesMoneyTrading();
 
 		if (usesVault && usesMoneyTrading) {
-			moneyInfoItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			moneyInfoItemStack = config.getMoneyBlockData().newItemStack();
 			ItemMeta moneyMeta = moneyInfoItemStack.getItemMeta();
 			moneyMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
 			List<String> moneyLore = Lists.newArrayList();
@@ -237,7 +235,7 @@ public class DefaultTrade implements Trade {
                 .getString(Messages.Inventory.ADD_MONEY_LORE)
                 .split("\n"));
 
-			addMoney1ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			addMoney1ItemStack = config.getMoneyBlockData().newItemStack();
 			ItemMeta metaMoney1 = addMoney1ItemStack.getItemMeta();
 			metaMoney1.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
                     .setVariable("money", econ.format(money1Value))
@@ -245,7 +243,7 @@ public class DefaultTrade implements Trade {
 			metaMoney1.setLore(addMoneyLore);
 			addMoney1ItemStack.setItemMeta(metaMoney1);
 			
-			addMoney2ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			addMoney2ItemStack = config.getMoneyBlockData().newItemStack();
 			ItemMeta metaMoney2 = addMoney2ItemStack.getItemMeta();
 			metaMoney2.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
                     .setVariable("money", econ.format(money2Value))
@@ -253,7 +251,7 @@ public class DefaultTrade implements Trade {
 			metaMoney2.setLore(addMoneyLore);
 			addMoney2ItemStack.setItemMeta(metaMoney2);
 			
-			addMoney3ItemStack = MONEY_MATERIAL_DATA.toItemStack(1);
+			addMoney3ItemStack = config.getMoneyBlockData().newItemStack();
 			ItemMeta metaMoney3 = addMoney3ItemStack.getItemMeta();
 			metaMoney3.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
                     .setVariable("money", econ.format(money3Value))
@@ -271,9 +269,9 @@ public class DefaultTrade implements Trade {
         int expValue3 = config.getExpValue3();
 
 		if (config.usesXpTrading()) {
-			addExp1ItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
-            addExp2ItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
-            addExp3ItemStack = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+			addExp1ItemStack = config.getXpBlockData().newItemStack();
+            addExp2ItemStack = config.getXpBlockData().newItemStack();
+            addExp3ItemStack = config.getXpBlockData().newItemStack();
 
 			ItemMeta addExpLevelMeta = addExp1ItemStack.getItemMeta();
 			addExpLevelMeta.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_EXP_TITLE)
@@ -814,8 +812,8 @@ public class DefaultTrade implements Trade {
         int partnerDiff = getLevelDiff(partner.getPlayer().getLevel(), SetExpFix.getTotalExperience(partner.getPlayer()),
                 initiator.getExpOffer() - partner.getExpOffer());
 
-		ItemStack expInfoInitiator = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
-        ItemStack expInfoPartner = EXPERIENCE_MATERIAL_DATA.toItemStack(1);
+		ItemStack expInfoInitiator = config.getXpBlockData().newItemStack();
+        ItemStack expInfoPartner = config.getXpBlockData().newItemStack();
 
 		ItemMeta expInfoMetaInitiator = expInfoInitiator.getItemMeta();
         ItemMeta expInfoMetaPartner = expInfoPartner.getItemMeta();
@@ -851,7 +849,7 @@ public class DefaultTrade implements Trade {
         expInfoPartner.setItemMeta(expInfoMetaPartner);
 
 		if (usesVault) {
-			ItemStack moneyInfo = MONEY_MATERIAL_DATA.toItemStack(1);
+			ItemStack moneyInfo = config.getMoneyBlockData().newItemStack();
 			ItemMeta moneyInfoMeta = moneyInfo.getItemMeta();
 			moneyInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
 			List<String> moneyInfoLore = Lists.newArrayList();

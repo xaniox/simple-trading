@@ -11,6 +11,10 @@ blocks:
   decline: 'ink_sack:1'
   # Block to seperate inventories
   seperator: 'barrier'
+  # Block for money status and add/remove buttons
+  money: 'gold_nugget'
+  # Block for xp status and add/remove buttons
+  xp: 'exp_bottle'
 inventory:
   # Specifies the inventory-gui name while trading
   # Note: Use @p as a placeholder for the playername
@@ -29,7 +33,8 @@ inventory:
   exp-value-3: 100
 localization:
   # The language this plugin is using. Currently
-  # an english and german translation is available
+  # an english, german, russian and french translation
+  # is available
   #
   # Possible values:
   # en_US - English
@@ -39,8 +44,8 @@ localization:
   #
   # If you want to help with the translation of SimpleTrading
   # feel free to translate it into your own language.
-  # For doing this, use the file located under
-  # /language/locale_en_US.yml as a template.
+  # To get started, use the file located under
+  # /language/locale_en_US.yml as a template for your translation.
   # Your translated file should have the following
   # format: locale_<language-code>_<country-code>.yml
   locale: en_US
@@ -88,4 +93,4 @@ world-control:
   world-list:
   - ''
 
-config-version: 3
+config-version: 4

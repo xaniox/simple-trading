@@ -31,13 +31,15 @@ public class TradeConfiguration {
 	private static final String BLOCKDATA_SEPERATOR = ":";
 	private static final String PLAYERNAME_PLACEHOLDER = "@p";
     public static final int NO_MAX_DISTANCE = -1;
-    public static final int CURRENT_CONFIG_VERSION = 3;
+    public static final int CURRENT_CONFIG_VERSION = 4;
     public static final String DESTINATION_FILE_NAME = "config.yml";
     public static final String CLASSPATH_RESOURCE_NAME = "/config.yml";
 
     private ItemStackData acceptBlockData;
 	private ItemStackData declineBlockData;
 	private ItemStackData seperatorBlockData;
+    private ItemStackData moneyBlockData;
+    private ItemStackData xpBlockData;
     private Locale locale;
 	private String inventoryName;
     private int moneyValue1;
@@ -67,6 +69,8 @@ public class TradeConfiguration {
 		acceptBlockData = ItemStackData.fromConfigString(blockSection.getString("accept", "ink_sack:10"), BLOCKDATA_SEPERATOR);
 		declineBlockData = ItemStackData.fromConfigString(blockSection.getString("decline", "ink_sack:1"), BLOCKDATA_SEPERATOR);
 		seperatorBlockData = ItemStackData.fromConfigString(blockSection.getString("seperator", "barrier"), BLOCKDATA_SEPERATOR);
+        moneyBlockData = ItemStackData.fromConfigString(blockSection.getString("money", "gold_nugget"), BLOCKDATA_SEPERATOR);
+        xpBlockData = ItemStackData.fromConfigString(blockSection.getString("xp", "exp_bottle"), BLOCKDATA_SEPERATOR);
 
         ConfigurationSection localizationSection = config.getConfigurationSection("localization");
         String localeString = localizationSection.getString("locale");
@@ -136,6 +140,14 @@ public class TradeConfiguration {
 	public ItemStackData getSeperatorBlockData() {
 		return seperatorBlockData;
 	}
+
+    public ItemStackData getMoneyBlockData() {
+        return moneyBlockData;
+    }
+
+    public ItemStackData getXpBlockData() {
+        return xpBlockData;
+    }
 
     public Locale getLocale() {
         return locale;
