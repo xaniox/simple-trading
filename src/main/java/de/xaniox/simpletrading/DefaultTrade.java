@@ -550,7 +550,7 @@ public class DefaultTrade implements Trade {
 					return;
 				}
 
-                if (newMoneyOffer > maxMoneyAmount) {
+                if (newMoneyOffer > maxMoneyAmount && maxMoneyAmount != -1) {
                     // Reached the limit
                     player.sendMessage(i18n.getString(Messages.General.MAX_TRADE_AMOUNT_REACHED));
                     return;
