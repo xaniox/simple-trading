@@ -11,10 +11,14 @@ blocks:
   decline: 'ink_sack:1'
   # Block to seperate inventories
   seperator: 'barrier'
-  # Block for money status and add/remove buttons
-  money: 'gold_nugget'
-  # Block for xp status and add/remove buttons
-  xp: 'exp_bottle'
+  # Block for money status
+  money-status: 'gold_nugget'
+  # Block for money add/remove buttons
+  money-add-remove: 'gold_nugget'
+  # Block for xp status
+  xp-status: 'exp_bottle'
+  # Block for xp add/remove buttons
+  xp-add-remove: 'exp_bottle'
 inventory:
   # Specifies the inventory-gui name while trading
   # Note: Use @p as a placeholder for the playername
@@ -93,4 +97,4 @@ world-control:
   world-list:
   - ''
 
-config-version: 4
+config-version: 5

@@ -169,7 +169,7 @@ public class DefaultTrade implements Trade {
 		ItemStack expInfoItemStack;
 		
 		if (config.usesXpTrading()) {
-			expInfoItemStack = config.getXpBlockData().newItemStack();
+			expInfoItemStack = config.getXpStatusBlockData().newItemStack();
 			ItemMeta expInfoMeta = expInfoItemStack.getItemMeta();
 			expInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.EXP_INFO_TITLE));
 			List<String> expLore = Lists.newArrayList();
@@ -216,7 +216,7 @@ public class DefaultTrade implements Trade {
         boolean usesMoneyTrading = config.usesMoneyTrading();
 
 		if (usesVault && usesMoneyTrading) {
-			moneyInfoItemStack = config.getMoneyBlockData().newItemStack();
+			moneyInfoItemStack = config.getMoneyStatusBlockData().newItemStack();
 			ItemMeta moneyMeta = moneyInfoItemStack.getItemMeta();
 			moneyMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
 			List<String> moneyLore = Lists.newArrayList();
@@ -235,7 +235,7 @@ public class DefaultTrade implements Trade {
                 .getString(Messages.Inventory.ADD_MONEY_LORE)
                 .split("\n"));
 
-			addMoney1ItemStack = config.getMoneyBlockData().newItemStack();
+			addMoney1ItemStack = config.getMoneyAddRemoveBlockData().newItemStack();
 			ItemMeta metaMoney1 = addMoney1ItemStack.getItemMeta();
 			metaMoney1.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
                     .setVariable("money", econ.format(money1Value))
@@ -243,7 +243,7 @@ public class DefaultTrade implements Trade {
 			metaMoney1.setLore(addMoneyLore);
 			addMoney1ItemStack.setItemMeta(metaMoney1);
 			
-			addMoney2ItemStack = config.getMoneyBlockData().newItemStack();
+			addMoney2ItemStack = config.getMoneyAddRemoveBlockData().newItemStack();
 			ItemMeta metaMoney2 = addMoney2ItemStack.getItemMeta();
 			metaMoney2.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
                     .setVariable("money", econ.format(money2Value))
@@ -251,7 +251,7 @@ public class DefaultTrade implements Trade {
 			metaMoney2.setLore(addMoneyLore);
 			addMoney2ItemStack.setItemMeta(metaMoney2);
 			
-			addMoney3ItemStack = config.getMoneyBlockData().newItemStack();
+			addMoney3ItemStack = config.getMoneyAddRemoveBlockData().newItemStack();
 			ItemMeta metaMoney3 = addMoney3ItemStack.getItemMeta();
 			metaMoney3.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_REMOVE_MONEY_LORE)
                     .setVariable("money", econ.format(money3Value))
@@ -269,9 +269,9 @@ public class DefaultTrade implements Trade {
         int expValue3 = config.getExpValue3();
 
 		if (config.usesXpTrading()) {
-			addExp1ItemStack = config.getXpBlockData().newItemStack();
-            addExp2ItemStack = config.getXpBlockData().newItemStack();
-            addExp3ItemStack = config.getXpBlockData().newItemStack();
+			addExp1ItemStack = config.getXpAddRemoveBlockData().newItemStack();
+            addExp2ItemStack = config.getXpAddRemoveBlockData().newItemStack();
+            addExp3ItemStack = config.getXpAddRemoveBlockData().newItemStack();
 
 			ItemMeta addExpLevelMeta = addExp1ItemStack.getItemMeta();
 			addExpLevelMeta.setDisplayName(i18n.getVarString(Messages.Inventory.ADD_EXP_TITLE)
@@ -812,8 +812,8 @@ public class DefaultTrade implements Trade {
         int partnerDiff = getLevelDiff(partner.getPlayer().getLevel(), SetExpFix.getTotalExperience(partner.getPlayer()),
                 initiator.getExpOffer() - partner.getExpOffer());
 
-		ItemStack expInfoInitiator = config.getXpBlockData().newItemStack();
-        ItemStack expInfoPartner = config.getXpBlockData().newItemStack();
+		ItemStack expInfoInitiator = config.getXpStatusBlockData().newItemStack();
+        ItemStack expInfoPartner = config.getXpStatusBlockData().newItemStack();
 
 		ItemMeta expInfoMetaInitiator = expInfoInitiator.getItemMeta();
         ItemMeta expInfoMetaPartner = expInfoPartner.getItemMeta();
@@ -849,7 +849,7 @@ public class DefaultTrade implements Trade {
         expInfoPartner.setItemMeta(expInfoMetaPartner);
 
 		if (usesVault) {
-			ItemStack moneyInfo = config.getMoneyBlockData().newItemStack();
+			ItemStack moneyInfo = config.getMoneyStatusBlockData().newItemStack();
 			ItemMeta moneyInfoMeta = moneyInfo.getItemMeta();
 			moneyInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
 			List<String> moneyInfoLore = Lists.newArrayList();
