@@ -206,6 +206,10 @@ public class TradeFactory implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
+        if (!config.usesShiftTrading()) {
+            return;
+        }
+
 		Player player = event.getPlayer();
 		if (!player.isSneaking()) {
 			return;

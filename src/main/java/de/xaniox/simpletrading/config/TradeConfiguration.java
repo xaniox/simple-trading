@@ -31,7 +31,7 @@ public class TradeConfiguration {
 	private static final String BLOCKDATA_SEPERATOR = ":";
 	private static final String PLAYERNAME_PLACEHOLDER = "@p";
     public static final int NO_MAX_DISTANCE = -1;
-    public static final int CURRENT_CONFIG_VERSION = 5;
+    public static final int CURRENT_CONFIG_VERSION = 6;
     public static final String DESTINATION_FILE_NAME = "config.yml";
     public static final String CLASSPATH_RESOURCE_NAME = "/config.yml";
 
@@ -55,6 +55,7 @@ public class TradeConfiguration {
 	private int timeout;
 	private boolean useXpTrading;
     private boolean useMoneyTrading;
+    private boolean useShiftTrading;
     private int maxMoneyTrading;
 	private ControlMode itemControlMode;
 	private List<ItemStackData> itemControlItems;
@@ -95,6 +96,7 @@ public class TradeConfiguration {
 		timeout = globalSection.getInt("timeout", 60);
 		useXpTrading = globalSection.getBoolean("use-xp-trading", true);
         useMoneyTrading = globalSection.getBoolean("use-money-trading", true);
+        useShiftTrading = globalSection.getBoolean("use-shift-trading", true);
         maxMoneyTrading = globalSection.getInt("max-money-trading", -1);
 		
 		ConfigurationSection itemControlSection = config.getConfigurationSection("item-control");
@@ -211,6 +213,10 @@ public class TradeConfiguration {
 
     public boolean usesMoneyTrading() {
         return useMoneyTrading;
+    }
+
+    public boolean usesShiftTrading() {
+        return useShiftTrading;
     }
 
     public int getMaxMoneyTrading() {

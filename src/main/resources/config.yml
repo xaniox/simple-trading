@@ -65,6 +65,8 @@ global:
   use-xp-trading: true
   # Specifies wether to use money trading or not
   use-money-trading: true
+  # Specifies wether to use the shift-right-click feature or not
+  use-shift-trading: true
   # Defines the maximum amount of money that can be traded at once
   # Set to -1 to disable this feature
   max-money-trading: -1
@@ -97,4 +99,4 @@ world-control:
   world-list:
   - ''
 
-config-version: 5
+config-version: 6
