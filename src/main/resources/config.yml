@@ -37,14 +37,15 @@ inventory:
   exp-value-3: 100
 localization:
   # The language this plugin is using. Currently
-  # an english, german, russian and french translation
-  # is available
+  # an english, german, russian, french and chinese (taiwan)
+  # translation is available.
   #
   # Possible values:
   # en_US - English
   # de_DE - German
   # ru_RU - Russian (translated by nixbeast)
   # fr_FR - French (translated by MisterJeu)
+  # zh_TW - Chinese / Taiwan (translated by TWKEVINXD)
   #
   # If you want to help with the translation of SimpleTrading
   # feel free to translate it into your own language.
