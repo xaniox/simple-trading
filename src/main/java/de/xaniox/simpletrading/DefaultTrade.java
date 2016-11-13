@@ -848,7 +848,7 @@ public class DefaultTrade implements Trade {
 		expInfoInitiator.setItemMeta(expInfoMetaInitiator);
         expInfoPartner.setItemMeta(expInfoMetaPartner);
 
-		if (usesVault) {
+		if (usesVault && config.usesMoneyTrading()) {
 			ItemStack moneyInfo = config.getMoneyStatusBlockData().newItemStack();
 			ItemMeta moneyInfoMeta = moneyInfo.getItemMeta();
 			moneyInfoMeta.setDisplayName(i18n.getString(Messages.Inventory.MONEY_INFO_TITLE));
