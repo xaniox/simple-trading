@@ -749,6 +749,7 @@ public class DefaultTrade implements Trade {
 	
 	private int addToTradeInventory(TradePlayer player, ItemStack stack) {
 		Inventory inv = player.getInventory();
+        int maxStackSize = Math.max(stack.getAmount(), stack.getMaxStackSize());
 		
 		for (int y = 2; y < 6; y++) {
 			for (int x = 0; x < 4; x++) {
@@ -766,8 +767,8 @@ public class DefaultTrade implements Trade {
 				}
 				
 				int newAmount = amount + stack.getAmount();
-				if (newAmount > current.getMaxStackSize()) {
-					newAmount = current.getMaxStackSize();
+				if (newAmount > maxStackSize) {
+					newAmount = maxStackSize;
 				}
 				
 				stack.setAmount(stack.getAmount() - (newAmount - amount));
