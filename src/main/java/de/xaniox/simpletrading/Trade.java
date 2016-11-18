@@ -43,6 +43,7 @@ public interface Trade {
 		MOVE,
 		LEFT_WORLD, 
 		TIMEOUT,
+        DECLINE,
 		SERVER_SHUTDOWN
 		
 	}

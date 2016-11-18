@@ -31,7 +31,7 @@ public class TradeConfiguration {
 	private static final String BLOCKDATA_SEPERATOR = ":";
 	private static final String PLAYERNAME_PLACEHOLDER = "@p";
     public static final int NO_MAX_DISTANCE = -1;
-    public static final int CURRENT_CONFIG_VERSION = 6;
+    public static final int CURRENT_CONFIG_VERSION = 7;
     public static final String DESTINATION_FILE_NAME = "config.yml";
     public static final String CLASSPATH_RESOURCE_NAME = "/config.yml";
 
@@ -57,6 +57,7 @@ public class TradeConfiguration {
     private boolean useMoneyTrading;
     private boolean useShiftTrading;
     private int maxMoneyTrading;
+	private boolean abortOnDecline;
 	private ControlMode itemControlMode;
 	private List<ItemStackData> itemControlItems;
 	private List<String> itemControlLores;
@@ -98,6 +99,7 @@ public class TradeConfiguration {
         useMoneyTrading = globalSection.getBoolean("use-money-trading", true);
         useShiftTrading = globalSection.getBoolean("use-shift-trading", true);
         maxMoneyTrading = globalSection.getInt("max-money-trading", -1);
+		abortOnDecline = globalSection.getBoolean("abort-on-decline", false);
 		
 		ConfigurationSection itemControlSection = config.getConfigurationSection("item-control");
 		itemControlMode = ControlMode.getMode(itemControlSection.getString("control-mode"), ControlMode.BLACKLIST);
@@ -223,7 +225,11 @@ public class TradeConfiguration {
         return maxMoneyTrading;
     }
 
-    public ControlMode getItemControlMode() {
+	public boolean isAbortOnDecline() {
+		return abortOnDecline;
+	}
+
+	public ControlMode getItemControlMode() {
 		return itemControlMode;
 	}
 	

@@ -71,6 +71,8 @@ global:
   # Defines the maximum amount of money that can be traded at once
   # Set to -1 to disable this feature
   max-money-trading: -1
+  # If set to true clicking on the decline button aborts the trade
+  abort-on-decline: false
 item-control:
   # The control mode the plugin is running
   # Available modes: blacklist, whitelist
@@ -100,4 +102,4 @@ world-control:
   world-list:
   - ''
 
-config-version: 6
+config-version: 7

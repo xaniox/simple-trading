@@ -356,6 +356,7 @@ public class DefaultTrade implements Trade {
                 .toString());
 			break;
 		case INVENTORY_CLOSE:
+		case DECLINE:
 			other.getPlayer().sendMessage(i18n.getVarString(Messages.General.CANCEL_TRADE_CANCEL)
                 .setVariable("player", who.getName())
                 .toString());
@@ -501,6 +502,10 @@ public class DefaultTrade implements Trade {
 			break;
 		case DECLINE:
 			tradePlayer.setAccepted(false);
+
+			if (config.isAbortOnDecline()) {
+				plugin.getFactory().stopTrade(this, StopCause.DECLINE, player);
+			}
 			break;
 		case ADD_EXP:
 			int newExpOffer = tradePlayer.getExpOffer();
