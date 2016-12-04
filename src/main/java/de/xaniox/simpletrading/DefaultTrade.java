@@ -769,6 +769,11 @@ public class DefaultTrade implements Trade {
 					amount = 0;
 				} else {
 					amount = current.getAmount();
+
+					if (amount >= maxStackSize) {
+						maxStackSize = amount;
+						continue;
+					}
 				}
 				
 				int newAmount = amount + stack.getAmount();
