@@ -63,6 +63,7 @@ public class SimpleTrading extends JavaPlugin {
 	
 	private boolean usingVault;
 	private Economy econ;
+	private boolean isDisabling;
 
 	public void onEnable() {
 		File configFile = new File(this.getDataFolder(), "config.yml");
@@ -112,6 +113,7 @@ public class SimpleTrading extends JavaPlugin {
 	
 	@Override
 	public void onDisable() {
+		isDisabling = true;
 		HandlerList.unregisterAll(this);
 		
 		if (movementTask != null) {
@@ -197,7 +199,11 @@ public class SimpleTrading extends JavaPlugin {
 	public Economy getEconomy() {
 		return econ;
 	}
-	
+
+	public boolean isDisabling() {
+		return isDisabling;
+	}
+
 	public TradeFactory getFactory() {
 		return factory;
 	}

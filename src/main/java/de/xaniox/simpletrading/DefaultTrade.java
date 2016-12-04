@@ -337,15 +337,17 @@ public class DefaultTrade implements Trade {
 			
 			initiator.getPlayer().closeInventory();
 			partner.getPlayer().closeInventory();
-			
-			Bukkit.getScheduler().runTask(plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					initiator.getPlayer().updateInventory();
-					partner.getPlayer().updateInventory();
-				}
-			});
+
+			if (!plugin.isDisabling()) {
+				Bukkit.getScheduler().runTask(plugin, new Runnable() {
+
+					@Override
+					public void run() {
+						initiator.getPlayer().updateInventory();
+						partner.getPlayer().updateInventory();
+					}
+				});
+			}
 		}
 		
 		
