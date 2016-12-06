@@ -594,7 +594,11 @@ public class DefaultTrade implements Trade {
 				player.sendMessage(i18n.getString(Messages.General.CANNOT_TRADE_ITEM));
 				return;
 			}
-			
+
+			if (stack == null || stack.getType() == Material.AIR) {
+				return;
+			}
+
 			ItemStack stackClone = stack.clone();
 			
 			int newStackAmount;
@@ -756,8 +760,8 @@ public class DefaultTrade implements Trade {
 	
 	private int addToTradeInventory(TradePlayer player, ItemStack stack) {
 		Inventory inv = player.getInventory();
-        int maxStackSize = Math.max(stack.getAmount(), stack.getMaxStackSize());
-		
+		int maxStackSize = Math.max(stack.getAmount(), stack.getMaxStackSize());
+
 		for (int y = 2; y < 6; y++) {
 			for (int x = 0; x < 4; x++) {
 				int slot = y * 9 + x;
@@ -765,17 +769,23 @@ public class DefaultTrade implements Trade {
 				ItemStack current = inv.getItem(slot);
 				int amount;
 				if (current != null && !current.isSimilar(stack)) {
+					//Totally not the itemstack we're searching for
 					continue;
 				} else if (current == null) {
+					//There is no itemstack in this slot
 					current = stack.clone();
 					amount = 0;
-				} else {
+				} else if (stack.getAmount() <= stack.getMaxStackSize()) {
+					//This itemstack is similar to our requested
+					//Only add up on this itemstack
 					amount = current.getAmount();
 
-					if (amount >= maxStackSize) {
-						maxStackSize = amount;
+					if (amount >= stack.getMaxStackSize()) {
+						//We can't add anything on top of this itemstack
 						continue;
 					}
+				} else {
+					continue;
 				}
 				
 				int newAmount = amount + stack.getAmount();
