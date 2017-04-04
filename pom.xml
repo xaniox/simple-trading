@@ -9,7 +9,7 @@
   <url>http://dev.bukkit.org/bukkit-plugins/simpletrading/</url>
   <properties>
     <project.encoding>UTF-8</project.encoding>
-    <project.author>Matthias Werning</project.author>
+    <project.author>xaniox</project.author>
     <mainClass>de.xaniox.simpletrading.SimpleTrading</mainClass>
   </properties>
   <build>
