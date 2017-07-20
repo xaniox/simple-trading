@@ -234,15 +234,20 @@ public class TradeFactory implements Listener {
             return;
         }
 		
-		if (!player.hasPermission(Permissions.TRADE_INITIATE_SHIFT.getPermission())) {
-			player.sendMessage(ChatColor.RED + "You don't have permission to trade!");
-			return;
-		}
-		
 		Trade trade = getTrade(player);
 		if (trade == null) {
+			if (!player.hasPermission(Permissions.TRADE_INITIATE_SHIFT.getPermission())) {
+				player.sendMessage(ChatColor.RED + "You don't have permission to trade!");
+				return;
+			}
+
 			initiateTrade(player, tradePartner);
 		} else if (trade.getPartner().getPlayer() == player) {
+			if (!player.hasPermission(Permissions.TRADE_ACCEPT_SHIFT.getPermission())) {
+				player.sendMessage(ChatColor.RED + "You don't have the permission the accept trades!");
+				return;
+			}
+
 			acceptTrade(player);
 		}
 	}
