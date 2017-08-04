@@ -97,7 +97,7 @@ public class SimpleTrading extends JavaPlugin {
 		
 		getCommand("trade").setExecutor(new CommandTrade(this));
 		movementTask = getServer().getScheduler().runTaskTimer(this, new MoveCheckerRunnable(factory, config), 20L, 30L);
-		
+
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
@@ -139,7 +139,7 @@ public class SimpleTrading extends JavaPlugin {
                 ConsoleCommandSender sender = Bukkit.getConsoleSender();
                 sender.sendMessage(ChatColor.RED + "Due to a SimpleTrading update your old configuration has been renamed");
                 sender.sendMessage(ChatColor.RED + "to config_old.yml and a new one has been generated. Make sure to");
-                sender.sendMessage(ChatColor.RED + "apply your old changes to the new config");
+                sender.sendMessage(ChatColor.RED + "apply your old changes to the new config!");
             } catch (IOException e) {
                 getLogger().log(Level.SEVERE, "Could not create updated configuration due to an IOException", e);
             }
