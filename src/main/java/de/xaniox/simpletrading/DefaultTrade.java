@@ -194,7 +194,9 @@ public class DefaultTrade implements Trade {
 		
 		ItemStack unconfirmedStatusItemStack = UNCONFIRMED_STATUS_MATERIAL_DATA.toItemStack(1);
 		ItemMeta unconfirmedStatusMeta = unconfirmedStatusItemStack.getItemMeta();
-		unconfirmedStatusMeta.setDisplayName(i18n.getString(Messages.Inventory.TRADE_STATUS_TITLE));
+		unconfirmedStatusMeta.setDisplayName(i18n.getVarString(Messages.Inventory.TRADE_STATUS_TITLE)
+			.setVariable("color", ChatColor.RED.toString())
+			.toString());
 		unconfirmedStatusMeta.setLore(Lists.newArrayList(i18n.getString(Messages.Inventory.WAITING_FOR_OTHER_PLAYER_LORE)));
 		unconfirmedStatusItemStack.setItemMeta(unconfirmedStatusMeta);
 		
